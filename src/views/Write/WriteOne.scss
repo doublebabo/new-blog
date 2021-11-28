@@ -1,0 +1,28 @@
+.write-one {
+  width: 1000px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+  font-size: 2rem;
+
+
+  .operation {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+    Button {
+      flex-basis: 49%;
+    }
+  }
+
+
+  .md-container {
+    .mde-text {
+      min-height: 55vh!important;
+      font-size: 2rem;
+    }
+  }
+  @media screen and (max-width: 960px){
+    width: auto !important;
+  }
+}

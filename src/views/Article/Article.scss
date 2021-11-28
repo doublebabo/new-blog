@@ -1,0 +1,18 @@
+.article {
+  .md-content {
+    margin: auto;
+    width: 960px;
+    background: #fff;
+    font-size: 1.25rem;
+    line-height: 2rem;
+  }
+  @media screen and (max-width: 960px){
+    display: block;
+    .md-content {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 2rem;
+      overflow: auto;
+    }
+  }
+}

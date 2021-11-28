@@ -1,0 +1,70 @@
+.home {
+  max-width: 1000px;
+  width: 100%;
+  margin: 3rem auto;
+  position: relative;
+  .art-card {
+    height: 9rem;
+    width: 60rem;
+    margin: 0.3rem;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 0 6px #efefef;
+    color: #000;
+    position: relative;
+    display: block;
+    .art-title {
+      font-size: 1.75rem;
+      font-weight: bold;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .art-abstract {
+      color: #333;
+      padding: .75rem 0;
+      word-break: break-word;
+    }
+    .art-bottom {
+      position: absolute;
+      bottom: 0.5rem;
+
+      .art-bottom-item {
+        margin-right: 0.8rem;
+      }
+    }
+  }
+  .home-l {
+    display: inline-block;
+  }
+  .home-r {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 20rem;
+    .home-r-add {
+      width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 960px){
+    margin-top: 0.75rem;
+    .art-card {
+      box-sizing: border-box;
+      margin: 1rem 2rem 1rem 1rem;
+      width: 92%;
+    }
+    .home-l {
+      display: block;
+    }
+    .home-r {
+      display: none;
+    }
+    .art-bottom {
+      right: 0;
+    }
+    .art-bottom > .comments,.tag {
+      display: none;
+    }
+  }
+}
+

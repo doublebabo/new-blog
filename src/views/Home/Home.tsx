@@ -16,6 +16,8 @@ export default function Home() {
         comments: Math.random() * 100,
     }))
 
+
+
     return (
         <div className={"home"}>
             <div className={'home-l'}>
@@ -26,7 +28,6 @@ export default function Home() {
                             <div className={"art-abstract"}>{item?.abstract.substring(0,200) || 'abstract'}</div>
                             <div className={"art-bottom"}>
                                 <Button
-                                    color="primary"
                                     size="small"
                                     className={"art-bottom-item read"}
                                     startIcon={<VisibilityIcon />}
@@ -34,7 +35,6 @@ export default function Home() {
                                     {+String(item.read*1000).substring(0,6)}
                                 </Button>
                                 <Button
-                                    color="primary"
                                     size="small"
                                     className={"art-bottom-item time"}
                                     startIcon={<AccessTimeIcon />}
@@ -42,20 +42,19 @@ export default function Home() {
                                     2021/1/2
                                 </Button>
                                 <Button
-                                    color="primary"
                                     size="small"
                                     className={"art-bottom-item comments"}
                                     startIcon={<ModeCommentIcon />}
                                 >
-                                    {item.comments}
+                                    {+String(item.comments*1000).substring(0,6)}
                                 </Button>
-                                <Button
-                                    variant="outlined"
-                                    size="small"
-                                    className={"art-bottom-item tag"}
-                                >
-                                    {item.tag}
-                                </Button>
+                                {/*<Button*/}
+                                {/*    variant="outlined"*/}
+                                {/*    size="small"*/}
+                                {/*    className={"art-bottom-item tag"}*/}
+                                {/*>*/}
+                                {/*    {item.tag}*/}
+                                {/*</Button>*/}
                             </div>
                         </Link>
                     ))

@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const instance = axios.create({
-    baseURL: process.env.NODE_ENV === 'development' ? 'http://192.168.1.102:8080/' : '/',
+    baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:8000/' : '/',
     timeout: 15000,
     // headers: {'X-Custom-Header': 'foobar'}
 });

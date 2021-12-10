@@ -26,7 +26,13 @@ export default function IndexRoutes() {
             }/>
             <Route path="/writeOne" element={
                 <WriteOne/>
-            }/>
+            }>
+                <Route
+                    index
+                    element={<WriteOne />}
+                />
+                <Route path=":id" element={<WriteOne />} />
+            </Route>
             <Route
                 path="*"
                 element={<NotFound/>}

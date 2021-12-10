@@ -11,10 +11,10 @@ export default function Article() {
     let [md, setMd] = useState("Loading......");
 
     useEffect(() => {
-        ArticleService.getArticleMd({id: 'React Router 6.md'}).then((res: any) => {
-            setMd(res.data)
+        ArticleService.getArticleObj({id: params.id}).then((res: any) => {
+            setMd(res.data.content)
         })
-    }, []);
+    }, [params]);
 
     return (
         <div className={"article"}>

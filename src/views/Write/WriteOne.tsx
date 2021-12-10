@@ -11,15 +11,21 @@ import PublishIcon from '@material-ui/icons/Publish';
 import ArticleService from "../../services/ArticleService";
 import 'highlight.js/styles/github.css';
 import rehypeHighlight from "rehype-highlight";
+import {useParams, useSearchParams} from "react-router-dom";
 
 export default function WriteOne() {
     const [value, setValue] = useState("");
     const [selectedTab, setSelectedTab] = useState("write");
+    let [searchParams, setSearchParams] = useSearchParams();
+    let params = useParams();
+
 
     useEffect(() => {
-        ArticleService.getArticleMd({id: 'React Router 6.md'}).then((res: any) => {
-            setValue(res.data)
-        })
+        if (params.id) {
+            ArticleService.getArticleObj({id: params.id}).then((res: any) => {
+                setValue(res.data)
+            })
+        }
     }, []);
 
     const save = async function* (data: any) {
@@ -43,12 +49,25 @@ export default function WriteOne() {
         // returns true meaning that the save was successful
         return false;
     };
-    const onDraft = () => {
-        console.log(value)
+
+    const onDraft =async () => {
+        if (!value) return;
+        const id = await ArticleService.saveArticleAsDraft({
+            content: value,
+            author: 'qi-xiao-gu',
+            name:''
+        });
+
     }
 
+
     const onPublish = () => {
-        console.log(value)
+        if (!value) return;
+        ArticleService.publishArticle({
+            content: value,
+            author: 'qi-xiao-gu',
+            name:''
+        });
     }
 
     return (

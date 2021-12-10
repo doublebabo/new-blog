@@ -7,6 +7,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import {Link} from "react-router-dom";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import './Nav.scss';
+import MenuIcon from '@material-ui/icons/Menu';
 
 export default function Nav() {
 
@@ -33,18 +34,22 @@ export default function Nav() {
             <div className={"nav-container"}>
                 <Link to={"/home"} className={"logo"}>启小谷</Link>
                 <div className={"logo-right"}>
-                    <div className={"search-box"}>
-                        <InputBase className={"search-box-input"} placeholder="Search" />
-                        <IconButton type="submit">
-                            <SearchIcon/>
-                        </IconButton>
-                    </div>
-                    <IconButton className="msg" color="primary">
+                    {/*<div className={"search-box"}>*/}
+                    {/*    <InputBase className={"search-box-input"} placeholder="Search" />*/}
+                    {/*    <IconButton type="submit">*/}
+                    {/*        <SearchIcon/>*/}
+                    {/*    </IconButton>*/}
+                    {/*</div>*/}
+                    <IconButton className="pc" color="primary">
                         <NotificationsNoneIcon style={{fontSize: 33}}/>
                     </IconButton>
-                    <IconButton
+                    <IconButton className="pc"
                         color="primary">
                         <AccountCircleIcon style={{fontSize: 33}}/>
+                    </IconButton>
+                    <IconButton
+                        color="primary" className="phone">
+                        <MenuIcon style={{fontSize: 33}}/>
                     </IconButton>
                 </div>
             </div>

@@ -7,7 +7,7 @@
   .nav-container {
     margin: auto;
     display: flex;
-    width: 1200px;
+    max-width: 1200px;
     .logo {
       font-size: 2.5rem;
       font-weight: bold;
@@ -46,19 +46,19 @@
     bottom: 30%;
     transition: all .2s ease-in-out ;
   }
-
-
   @media screen and (max-width: 960px){
     padding: 0;
     .nav-container {
       width: auto;
       .logo {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
         margin: auto 0 auto 2.5rem;
+        font-weight: bold;
       }
-      .msg {
+      .pc {
         display: none;
       }
+
     }
     .top-icon-show {
       right: 2rem;

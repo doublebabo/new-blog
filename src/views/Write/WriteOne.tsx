@@ -2,7 +2,7 @@ import * as React from "react";
 import ReactMde from "react-mde";
 import ReactMarkdown from "react-markdown";
 import "react-mde/lib/styles/css/react-mde-all.css";
-import {useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useRef, useState} from "react";
 import remarkGfm from "remark-gfm";
 import './WriteOne.scss'
 import {Button} from "@material-ui/core";
@@ -12,13 +12,32 @@ import ArticleService from "../../services/ArticleService";
 import 'highlight.js/styles/github.css';
 import rehypeHighlight from "rehype-highlight";
 import {useParams, useSearchParams} from "react-router-dom";
+import TextField from "@material-ui/core/TextField";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormControl from "@material-ui/core/FormControl";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import MySnackbars from "../../components/MySnackbars/MySnackbars";
 
 export default function WriteOne() {
     const [value, setValue] = useState("");
+    const [name, setName] = useState("");
     const [selectedTab, setSelectedTab] = useState("write");
+    const [categories, setCategories] = useState<Array<any>>([]);
+    const [category, setCategory] = useState("");
+    const childRef = useRef();
     let [searchParams, setSearchParams] = useSearchParams();
     let params = useParams();
 
+    const handlerSubmit = () => {
+        // @ts-ignore
+        // childRef.current.handleClick();
+    }
+
+    const getCategories = async () => {
+        const {data} = await ArticleService.getCategories();
+        setCategories(data.filter((i: any) => i.parent_id !== -1))
+    }
 
     useEffect(() => {
         if (params.id) {
@@ -26,6 +45,7 @@ export default function WriteOne() {
                 setValue(res.data)
             })
         }
+        getCategories();
     }, []);
 
     const save = async function* (data: any) {
@@ -35,79 +55,109 @@ export default function WriteOne() {
                 setTimeout(() => a(), time);
             });
         };
-
         // Upload "data" to your server
         // Use XMLHttpRequest.send to send a FormData object containing
         // "data"
         // Check this question: https://stackoverflow.com/questions/18055422/how-to-receive-php-image-data-over-copy-n-paste-javascript-with-xmlhttprequest
-
         await wait(2000);
         // yields the URL that should be inserted in the markdown
         yield "https://picsum.photos/300";
         await wait(2000);
-
         // returns true meaning that the save was successful
         return false;
     };
 
-    const onDraft =async () => {
+    const onDraft = async () => {
         if (!value) return;
         const id = await ArticleService.saveArticleAsDraft({
             content: value,
             author: 'qi-xiao-gu',
-            name:''
+            name: ''
         });
-
     }
 
 
     const onPublish = () => {
+        // handlerSubmit();
         if (!value) return;
         ArticleService.publishArticle({
             content: value,
             author: 'qi-xiao-gu',
-            name:''
+            name: ''
         });
     }
 
+    const onCategoryChange = (event: React.ChangeEvent<any>) => {
+        setCategory(event.target.value)
+    }
+
+    const onNameChange = (event: React.ChangeEvent<any>) => {
+        setName(event.target.value)
+    }
+
+
+
     return (
         <div className="write-one">
-            <div className="operation">
-                <Button
-                    variant="outlined"
-                    size="large"
-                    color="primary"
-                    startIcon={<SaveOutlinedIcon />}
-                    onClick={onDraft}
-                >
-                    存为草稿
-                </Button>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    startIcon={<PublishIcon />}
-                    onClick={onPublish}
-                >
-                    发布
-                </Button>
-            </div>
-            <div className="md-container">
-                <ReactMde
-                    value={value}
-                    onChange={setValue}
-                    selectedTab={selectedTab as any}
-                    onTabChange={setSelectedTab}
-                    generateMarkdownPreview={(markdown:string) =>
-                        Promise.resolve(<ReactMarkdown children={markdown}
-                                                       rehypePlugins={[rehypeHighlight]}
-                                                       remarkPlugins={[[remarkGfm, {singleTilde: false}]]} />)
-                    }
-                    paste={{
-                        saveImage: save
-                    }}
-                />
-            </div>
+            <MySnackbars ref={childRef} type={'warning'} message={'存在必填项未填'}/>
+            <form id='form'>
+                <div className={'header'}>
+                    <FormControl className={"header-item"}>
+                        <InputLabel htmlFor="grouped-select">分类</InputLabel>
+                        <Select defaultValue="" required id="grouped-select" name={"category"} value={category}
+                                onChange={onCategoryChange}>
+                            {
+                                categories.map(item => (
+                                    <MenuItem value={item.id} key={item.id}>{item.name}</MenuItem>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
+                    <TextField className={"header-item"}
+                               name={"name"}
+                               id="standard-textarea"
+                               label="标题" required
+                               value={name}
+                               onChange={onNameChange}
+                    />
+                    <Button className={"header-item"}
+                            size="large"
+                            variant="outlined"
+                            startIcon={<PublishIcon/>}
+                            onClick={onPublish}
+                            type="submit"
+                            color={"primary"}
+                    >
+                        发布
+                    </Button>
+                    <Button className={"header-item"}
+                            variant="outlined"
+                            size="large"
+                            startIcon={<SaveOutlinedIcon/>}
+                            onClick={onDraft}
+                            type="submit"
+                    >
+                        存为草稿
+                    </Button>
+                </div>
+
+                <div className="md-container">
+                    <ReactMde
+                        value={value}
+                        onChange={setValue}
+                        selectedTab={selectedTab as any}
+                        onTabChange={setSelectedTab}
+                        generateMarkdownPreview={(markdown: string) =>
+                            Promise.resolve(<ReactMarkdown children={markdown}
+                                                           rehypePlugins={[rehypeHighlight]}
+                                                           remarkPlugins={[[remarkGfm, {singleTilde: false}]]}/>)
+                        }
+                        paste={{
+                            saveImage: save
+                        }}
+                    />
+                </div>
+            </form>
         </div>
     );
 }

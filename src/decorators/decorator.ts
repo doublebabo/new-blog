@@ -5,7 +5,7 @@ export const  throttle = (timeout: number) => (target: any, name: string, descri
     descriptor.value = function (...args: any) {
         const curTime = +new Date();
         if (curTime - prevTime > timeout) {
-            old.call(this,args);
+            old.call(this,...args);
             prevTime = curTime;
         }
     }

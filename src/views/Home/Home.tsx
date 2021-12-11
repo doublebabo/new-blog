@@ -3,12 +3,16 @@ import './Home.scss';
 import {Link} from "react-router-dom";
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import {Button} from "@material-ui/core";
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import ModeCommentIcon from '@material-ui/icons/ModeComment';
 import ArticleService from "../../services/ArticleService";
 import {throttle} from "../../decorators/decorator";
-import MyButton from "../../components/MyButton/MyButton";
-
+import FaceIcon from '@material-ui/icons/Face';
+import StarsIcon from '@material-ui/icons/Stars';
+import ChildCareIcon from '@material-ui/icons/ChildCare';
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import TextField from "@material-ui/core/TextField";
+import DialogActions from "@material-ui/core/DialogActions";
 interface ArticleModel {
     id: number,
     name: string,
@@ -21,201 +25,226 @@ interface ArticleModel {
 
 interface HomeState {
     list: Array<ArticleModel>
+    categories: Array<any>,
+    activeTag: string,
+    websiteLatestComments: Array<any>,
+    recommendArticles: Array<any>,
+    open: boolean,
 }
 
-export default class Home2 extends React.Component<any, HomeState>{
+export default class Home2 extends React.Component<any, HomeState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            list: []
+            list: [],
+            categories: [],
+            activeTag: "全部文章",
+            websiteLatestComments: [],
+            recommendArticles: [],
+            open: false
         };
     }
 
     queryObj = {
         pageIndex: 1,
-        pageSize: 10
+        pageSize: 10,
+        categoryId: ''
     }
 
     noDataAnyMore: boolean = false;
-    dateFormat(s: string) {
-        const date = new Date(s)
-        return date.getFullYear() + '-' + (date.getMonth() + 1) +'-'+ date.getDate();
-    }
+    loadingData: boolean = false;
+
 
     componentDidMount() {
         this.getArticles();
-        this.listenScroll();
+        this.getCategories();
+        this.getWebsiteLatestComments();
+        this.getRecommendArticles();
+         this.listenScroll();
     }
 
-    @throttle(1000)
-    getArticles() {
-        if (this.noDataAnyMore) return;
-        ArticleService.getArticles(this.queryObj).then((res: any) => {
-            if (!res.data.length) {
-                this.noDataAnyMore = true;
-            }
-            this.setState({
-                list: this.state.list.concat(res.data)
-            });
-            this.queryObj.pageIndex = this.queryObj.pageIndex + 1;
+    @throttle(500)
+    async getArticles(reset = false) {
+        this.loadingData = true;
+        const {data} = await ArticleService.getArticles(this.queryObj);
+        this.loadingData = false;
+        this.noDataAnyMore = !data.length;
+        this.queryObj.pageIndex = this.queryObj.pageIndex + 1;
+        this.setState({
+            list: reset ? data : this.state.list.concat(data)
+        });
+    }
+
+    async getCategories() {
+        this.setState({
+            categories: [{
+                id: '',
+                name: '全部文章'
+            }].concat((await ArticleService.getCategories()).data?.filter((item: any) => item.parent_id !== -1) || [])
         })
     }
 
     listenScroll() {
-        window.onscroll = () => {
+        window.addEventListener('scroll', () => {
             if (document.documentElement.offsetHeight - (window.screen.height + window.scrollY) <= 300) {
+                if (this.noDataAnyMore || this.loadingData) return;
                 this.getArticles();
             }
-        }
+        })
     }
 
+    @throttle(500)
+    onClickNavTag(e: any) {
+        console.log(this)
+        if (this.loadingData) return
+        this.setState({
+            activeTag: e.name
+        });
+        this.queryObj.categoryId = e.id || '';
+        this.queryObj.pageIndex = 1;
+        window.scrollTo({top: 0})
+        this.getArticles(true);
+    }
+
+    async getWebsiteLatestComments() {
+        this.setState({
+            websiteLatestComments: (await ArticleService.getWebsiteLatestComments()).data || []
+        })
+    }
+
+    async getRecommendArticles() {
+        this.setState({
+            recommendArticles: (await ArticleService.getRecommendArticles()).data || []
+        })
+    }
+
+    handleClickOpen = () => {
+        this.setState({open: true})
+    }
+
+    handleClose = () => {
+        this.setState({open: false})
+    }
+
+
     render() {
+        // @ts-ignore
         return (
-            <div className={"home"}>
-                <div className={'home-l'}>
-                    {
-                        this.state.list.map(item => (
-                            <Link to={`/article/${item.id}`} className={"art-card"} key={item.id}>
-                                <div className={"art-title"}>{item.name}</div>
-                                <div className={"art-abstract"}>{item.abstract}</div>
-                                <div className={"art-bottom"}>
-                                    <Button
-                                        size="small"
-                                        className={"art-bottom-item read"}
-                                        startIcon={<VisibilityIcon />}
-                                    >
-                                        {item.clicks}
-                                    </Button>
-                                    {/*<Button*/}
-                                    {/*    size="small"*/}
-                                    {/*    className={"art-bottom-item time"}*/}
-                                    {/*    startIcon={<AccessTimeIcon />}*/}
-                                    {/*>*/}
-                                    {/*    {this.dateFormat(item.create_time)}*/}
-                                    {/*</Button>*/}
-                                    <Button
-                                        size="small"
-                                        className={"art-bottom-item comments"}
-                                        startIcon={<ModeCommentIcon />}
-                                    >
-                                        {item.comment_counts || 0}
-                                    </Button>
-                                    {/*<Button*/}
-                                    {/*    variant="outlined"*/}
-                                    {/*    size="small"*/}
-                                    {/*    className={"art-bottom-item tag"}*/}
-                                    {/*>*/}
-                                    {/*    {item.tag}*/}
-                                    {/*</Button>*/}
+            <div className={"home-outer"}>
+                <div className={"home"}>
+                    <div className="nav-tags">
+                        {
+                            this.state.categories.map((item: any) => (
+                                <div onClick={() => this.onClickNavTag({id: item.id, name: item.name})}
+                                     className={this.state.activeTag === item.name ? 'nav-tag active' : 'nav-tag'}
+                                     key={item.id}>
+                                    {`${item.name}`}
                                 </div>
-                            </Link>
-                        ))
-                    }
+                            ))
+                        }
+                    </div>
+                    <div className={'home-l'}>
+                        {
+                            !this.state.list.length ? (<div className="no-data">
+                                {`暂无${this.state.activeTag}内容`}
+                            </div>) : this.state.list.map(item => (
+                                <Link to={`/article/${item.id}`} className={"art-card"} key={item.id}>
+                                    <div className={"art-title"}>{item.name}</div>
+                                    <div className={"art-abstract"}>{item.abstract}</div>
+                                    <div className={"art-bottom"}>
+                                        <Button
+                                            size="small"
+                                            className={"art-bottom-item read"}
+                                            startIcon={<VisibilityIcon/>}
+                                        >
+                                            {item.clicks}
+                                        </Button>
+                                        {/*<Button*/}
+                                        {/*    size="small"*/}
+                                        {/*    className={"art-bottom-item time"}*/}
+                                        {/*    startIcon={<AccessTimeIcon />}*/}
+                                        {/*>*/}
+                                        {/*    {this.dateFormat(item.create_time)}*/}
+                                        {/*</Button>*/}
+                                        <Button
+                                            size="small"
+                                            className={"art-bottom-item comments"}
+                                            startIcon={<ModeCommentIcon/>}
+                                        >
+                                            {item.comment_counts || 0}
+                                        </Button>
+                                        {/*<Button*/}
+                                        {/*    variant="outlined"*/}
+                                        {/*    size="small"*/}
+                                        {/*    className={"art-bottom-item tag"}*/}
+                                        {/*>*/}
+                                        {/*    {item.tag}*/}
+                                        {/*</Button>*/}
+                                    </div>
+                                </Link>
+                            ))
+                        }
+                    </div>
+                    <div className={'home-r'}>
+                        <div className={"r-card"}>
+                            <div className={"r-card-title"}>推荐</div>
+                            {
+                                !this.state.recommendArticles.length ? '暂无推荐' : (
+                                    this.state.recommendArticles.map((item: any) => (
+                                        <Link to={`/Article/${item.id}`} className={'r-card-content'}>
+                                            <StarsIcon/> <div >{item.name}</div>
+                                        </Link>
+                                    ))
+                                )
+                            }
+                        </div>
+                        <div className={"r-card-btn"} onClick={this.handleClickOpen }>
+                            <div className={"r-card-btn-title"} > 我也口吐芬芳</div>
+                            <ChildCareIcon fontSize={'large'}/>
+                        </div>
+                        <div className={"r-card"}>
+                            <div className={"r-card-title"}>留言板</div>
+                            {
+                                !this.state.websiteLatestComments.length ? '暂无留言' : (
+                                    this.state.websiteLatestComments.map((item: any) => (
+                                        <Link className={'r-card-msg'} to={"#"}>
+                                            <FaceIcon/><div className={'long-msg'} title={item.message}>{item.username} <span style={{color: '#ff5722'}}>From</span> {item.ip || 'nowhere'} ：{item.message}</div>
+                                        </Link>
+                                    ))
+                                )
+                            }
+                        </div>
+                        <div className={"r-card"}>
+                            <div className={"r-card-title"}>联系方式</div>
+                            <div className={'r-card-content'}>Email：1436667237@qq.com</div>
+                            <div className={'r-card-content'}>WeChat：wp143666</div>
+                        </div>
+                    </div>
                 </div>
-                {/*<div className="home-r">*/}
-                {/*    <Link to={'/writeOne'}>*/}
-                {/*        <MyButton name={'写文章'}>*/}
-                {/*        </MyButton>*/}
-                {/*    </Link>*/}
-                {/*</div>*/}
+                <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                    <DialogContent>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            label="留言"
+                            multiline
+                            rows={4}
+                            variant="outlined"
+                            defaultValue="听君一席话 如听一席话"
+                            style={{minWidth: '500px'}}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClose} color="primary">
+                            下次一定
+                        </Button>
+                        <Button onClick={this.handleClose} color="primary">
+                            提交留言
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         )
     }
 }
-
-// export function Home() {
-//     let [list, setList] = useState<ArticleModel[]>([]);
-//     let articleService = new ArticleService();
-//
-//     let [query, setQuery] = useState<any>({
-//         pageIndex: 1,
-//         pageSize: 10
-//     });
-//
-//     // document.
-//
-//
-//     useEffect(() => {
-//         window.onscroll = () => {
-//             if (document.documentElement.offsetHeight - (document.documentElement.clientHeight + window.scrollY) <= 20) {
-//                 loadingMoreArticles();
-//             }
-//         }
-//         articleService.getArticles(query).then((res: any) => {
-//             console.log(list.concat(res.data))
-//             setList([...list,...res.data]);
-//         })
-//     }, [query]);
-//
-//     // @throttle(1000)
-//     function loadingMoreArticles() {
-//         setQuery({
-//             pageIndex: query.pageIndex + 1,
-//             pageSize: query.pageSize
-//         })
-//     }
-//
-//     function dateFormat(s: string) {
-//         const date = new Date(s)
-//         return date.getFullYear() + '-' + (date.getMonth() + 1) +'-'+ date.getDate();
-//     }
-//
-//     return (
-//         <div className={"home"}>
-//             <div className={'home-l'}>
-//                 {
-//                     list.map(item => (
-//                         <Link to={`/article/${item.id}`} className={"art-card"} key={item.id}>
-//                             <div className={"art-title"}>{item.name}</div>
-//                             <div className={"art-abstract"}>{item.abstract}</div>
-//                             <div className={"art-bottom"}>
-//                                 <Button
-//                                     size="small"
-//                                     className={"art-bottom-item read"}
-//                                     startIcon={<VisibilityIcon />}
-//                                 >
-//                                     {item.clicks}
-//                                 </Button>
-//                                 <Button
-//                                     size="small"
-//                                     className={"art-bottom-item time"}
-//                                     startIcon={<AccessTimeIcon />}
-//                                 >
-//                                     {dateFormat(item.create_time)}
-//                                 </Button>
-//                                 <Button
-//                                     size="small"
-//                                     className={"art-bottom-item comments"}
-//                                     startIcon={<ModeCommentIcon />}
-//                                 >
-//                                     {item.comment_counts || 0}
-//                                 </Button>
-//                                 {/*<Button*/}
-//                                 {/*    variant="outlined"*/}
-//                                 {/*    size="small"*/}
-//                                 {/*    className={"art-bottom-item tag"}*/}
-//                                 {/*>*/}
-//                                 {/*    {item.tag}*/}
-//                                 {/*</Button>*/}
-//                             </div>
-//                         </Link>
-//                     ))
-//                 }
-//             </div>
-//             <div className="home-r">
-//                 <Link to={'/writeOne'}>
-//                     <Button
-//                         variant="contained"
-//                         color="primary"
-//                         size="large"
-//                         className="home-r-add"
-//                         startIcon={<CreateIcon />}
-//                     >
-//                         写文章
-//                     </Button>
-//                 </Link>
-//
-//             </div>
-//         </div>
-//     );
-// }

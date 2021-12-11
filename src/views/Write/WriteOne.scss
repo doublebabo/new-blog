@@ -2,8 +2,17 @@
   width: 1000px;
   margin: 2rem auto;
   padding: 0 2rem;
-  font-size: 2rem;
+  font-size: 1rem;
+  flex-grow: 1;
+  .header {
+    display: flex;
+    align-items: center;
 
+    .header-item {
+      flex-basis: 25%;
+      margin: 0.5rem;
+    }
+  }
 
   .operation {
     display: flex;

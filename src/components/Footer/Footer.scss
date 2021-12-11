@@ -1,0 +1,26 @@
+.footer {
+  background: #fff;
+  color: #4e5358;
+  flex-shrink: 1;
+  padding: 0 2rem;
+
+  .content {
+    margin: 0 auto;
+    padding: 3rem 0;
+    max-width: 1200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+  }
+
+  @media screen and (max-width: 960px) {
+    .content {
+      padding: 1rem 0;
+    }
+  }
+}

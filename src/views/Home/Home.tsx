@@ -13,6 +13,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
+
 interface ArticleModel {
     id: number,
     name: string,
@@ -30,6 +31,7 @@ interface HomeState {
     websiteLatestComments: Array<any>,
     recommendArticles: Array<any>,
     open: boolean,
+    comment: string,
 }
 
 export default class Home2 extends React.Component<any, HomeState> {
@@ -41,7 +43,8 @@ export default class Home2 extends React.Component<any, HomeState> {
             activeTag: "全部文章",
             websiteLatestComments: [],
             recommendArticles: [],
-            open: false
+            open: false,
+            comment: '听君一席话 如听一席话'
         };
     }
 
@@ -60,7 +63,7 @@ export default class Home2 extends React.Component<any, HomeState> {
         this.getCategories();
         this.getWebsiteLatestComments();
         this.getRecommendArticles();
-         this.listenScroll();
+        this.listenScroll();
     }
 
     @throttle(500)
@@ -80,7 +83,7 @@ export default class Home2 extends React.Component<any, HomeState> {
             categories: [{
                 id: '',
                 name: '全部文章'
-            }].concat((await ArticleService.getCategories()).data?.filter((item: any) => item.parent_id !== -1) || [])
+            }].concat((await ArticleService.getCategories()).data?.filter((item: any) => item.parentId !== -1) || [])
         })
     }
 
@@ -118,12 +121,31 @@ export default class Home2 extends React.Component<any, HomeState> {
         })
     }
 
-    handleClickOpen = () => {
+    handleCommentDialogOpen = () => {
+        this.setState({
+            comment: '君问归期未有期'
+        })
         this.setState({open: true})
     }
 
-    handleClose = () => {
+    handleCommentDialogClose = () => {
         this.setState({open: false})
+    }
+
+    onLeaveComment = async () => {
+        if (!this.state.comment) return
+        await ArticleService.addNewWebsiteComment({
+            username: 'Nobody',
+            message: this.state.comment,
+        });
+        this.handleCommentDialogClose();
+        this.getWebsiteLatestComments();
+    }
+
+    onCommentChange = (e: any) => {
+        this.setState({
+            comment: e.target.value
+        })
     }
 
 
@@ -187,41 +209,49 @@ export default class Home2 extends React.Component<any, HomeState> {
                     </div>
                     <div className={'home-r'}>
                         <div className={"r-card"}>
-                            <div className={"r-card-title"}>推荐</div>
+                            <div className={"r-card-title"}>推荐使用</div>
                             {
                                 !this.state.recommendArticles.length ? '暂无推荐' : (
                                     this.state.recommendArticles.map((item: any) => (
-                                        <Link to={`/Article/${item.id}`} className={'r-card-content'}>
-                                            <StarsIcon/> <div >{item.name}</div>
+                                        <Link key={item.id} to={`/Article/${item.id}`} className={'r-card-content'}>
+                                            <StarsIcon/>
+                                            <div>{item.name}</div>
                                         </Link>
                                     ))
                                 )
                             }
                         </div>
-                        <div className={"r-card-btn"} onClick={this.handleClickOpen }>
-                            <div className={"r-card-btn-title"} > 我也口吐芬芳</div>
+                        <div className={"r-card-btn"} onClick={this.handleCommentDialogOpen}>
+                            <div className={"r-card-btn-title"}>我要口吐芬芳</div>
                             <ChildCareIcon fontSize={'large'}/>
                         </div>
                         <div className={"r-card"}>
-                            <div className={"r-card-title"}>留言板</div>
+                            <div className={"r-card-title"}>哔哔区</div>
                             {
                                 !this.state.websiteLatestComments.length ? '暂无留言' : (
                                     this.state.websiteLatestComments.map((item: any) => (
-                                        <Link className={'r-card-msg'} to={"#"}>
-                                            <FaceIcon/><div className={'long-msg'} title={item.message}>{item.username} <span style={{color: '#ff5722'}}>From</span> {item.ip || 'nowhere'} ：{item.message}</div>
+                                        <Link key={item.id} className={'r-card-msg'} to={"#"}>
+                                            <FaceIcon/>
+                                            <div className={'long-msg'} title={item.message}>
+                                                <span>{item.username}</span>
+                                                <span
+                                                    style={{color: '#ff5722'}}> From </span> {item.ip || 'nowhere'} ：
+                                                <div className={'long-msg-content'}>{item.message}</div>
+                                            </div>
                                         </Link>
                                     ))
                                 )
                             }
                         </div>
                         <div className={"r-card"}>
-                            <div className={"r-card-title"}>联系方式</div>
+                            <div className={"r-card-title"}>骚扰方式!</div>
                             <div className={'r-card-content'}>Email：1436667237@qq.com</div>
                             <div className={'r-card-content'}>WeChat：wp143666</div>
                         </div>
                     </div>
                 </div>
-                <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                <Dialog open={this.state.open} onClose={this.handleCommentDialogClose}
+                        aria-labelledby="form-dialog-title">
                     <DialogContent>
                         <TextField
                             autoFocus
@@ -231,15 +261,16 @@ export default class Home2 extends React.Component<any, HomeState> {
                             multiline
                             rows={4}
                             variant="outlined"
-                            defaultValue="听君一席话 如听一席话"
                             style={{minWidth: '500px'}}
+                            value={this.state.comment}
+                            onChange={this.onCommentChange}
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">
+                        <Button onClick={this.handleCommentDialogClose} color="primary">
                             下次一定
                         </Button>
-                        <Button onClick={this.handleClose} color="primary">
+                        <Button onClick={this.onLeaveComment} color="primary">
                             提交留言
                         </Button>
                     </DialogActions>

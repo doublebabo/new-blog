@@ -8,6 +8,8 @@ enum apis {
     GetCategories = "getCategories",
     GetWebsiteLatestComments = "getWebsiteLatestComments",
     GetRecommendArticles = "getRecommendArticles",
+    AddNewWebsiteComment = "addNewWebsiteComment",
+    Login = "login",
 }
 
 export default class ArticleService {
@@ -41,5 +43,17 @@ export default class ArticleService {
 
     static getWebsiteLatestComments =(): Promise<any> => {
         return http.post(apis.GetWebsiteLatestComments);
+    }
+
+    static addNewWebsiteComment =(params: any): Promise<any> => {
+        return http.post(apis.AddNewWebsiteComment, params);
+    }
+
+    static login =(params: any): Promise<any> => {
+        return http.post(apis.Login, params);
+    }
+
+    static register =(params: any): Promise<any> => {
+        return http.post(apis.Login, params);
     }
 }

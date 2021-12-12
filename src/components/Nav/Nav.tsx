@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from "react";
+import React, {MutableRefObject, useEffect, useRef, useState} from "react";
 import {IconButton} from "@material-ui/core";
-import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Link} from "react-router-dom";
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
@@ -11,10 +10,15 @@ import MenuItem from "@material-ui/core/MenuItem";
 import CloseIcon from '@material-ui/icons/Close';
 import Button from "@material-ui/core/Button";
 import CreateIcon from '@material-ui/icons/Create';
+import LoginDialog from "../LoginDialog/LoginDialog";
+
+
+
 export default function Nav() {
 
     const [available, setAvailable] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const loginDialog = useRef<null | any>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -42,6 +46,11 @@ export default function Nav() {
         window.scrollTo({top: 0})
     }
 
+    const onLogin = () => {
+        setAnchorEl(null);
+        loginDialog?.current.loginDialogOpen();
+    }
+
     return (
         <div className={"nav"}>
             <div className={"nav-container"}>
@@ -56,6 +65,7 @@ export default function Nav() {
                         </Button>
                     </Link>
                     <IconButton className="pc"
+                                onClick={onLogin}
                         color="primary">
                         <AccountCircleIcon style={{fontSize: 33}}/>
                     </IconButton>
@@ -72,25 +82,25 @@ export default function Nav() {
             <Menu
                 id="simple-menu"
                 anchorEl={anchorEl}
-                keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
                 <MenuItem style={{justifyContent: "center"}} onClick={handleClose}><CloseIcon/></MenuItem>
-                <MenuItem style={{justifyContent: "center"}} onClick={handleClose}>搜索</MenuItem>
                 <MenuItem style={{justifyContent: "center"}} onClick={handleClose}>
                     <Link to={'/home'}>
                         Home
                     </Link>
                 </MenuItem>
-                <MenuItem style={{justifyContent: "center"}} onClick={handleClose}>登录</MenuItem>
+                <MenuItem style={{justifyContent: "center"}} onClick={handleClose}>搜索</MenuItem>
+                <MenuItem style={{justifyContent: "center"}} onClick={handleClose}>所有类别</MenuItem>
                 <MenuItem style={{justifyContent: "center"}} onClick={handleClose}>
                     <Link to={'/writeOne'}>
                         写文章
                     </Link>
                 </MenuItem>
-                <MenuItem style={{justifyContent: "center"}} onClick={handleClose}>所有类别</MenuItem>
+                <MenuItem style={{justifyContent: "center"}} onClick={onLogin}>登录</MenuItem>
             </Menu>
+            <LoginDialog ref={loginDialog}/>
         </div>
     );
 }

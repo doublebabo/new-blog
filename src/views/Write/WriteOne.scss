@@ -33,5 +33,11 @@
   }
   @media screen and (max-width: 960px){
     width: auto !important;
+    .header {
+      flex-direction: column;
+      .header-item {
+        width: 100%;
+      }
+    }
   }
 }

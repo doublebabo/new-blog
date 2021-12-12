@@ -20,11 +20,12 @@ import Select from "@material-ui/core/Select";
 import MySnackbars from "../../components/MySnackbars/MySnackbars";
 
 export default function WriteOne() {
-    const [value, setValue] = useState("");
-    const [name, setName] = useState("");
+    const [value, setValue] = useState(""); // markdownn内容
+    const [name, setName] = useState(""); // 文章名字
+    const [category, setCategory] = useState(""); // 文章类别
+
     const [selectedTab, setSelectedTab] = useState("write");
     const [categories, setCategories] = useState<Array<any>>([]);
-    const [category, setCategory] = useState("");
     const childRef = useRef();
     let [searchParams, setSearchParams] = useSearchParams();
     let params = useParams();
@@ -36,7 +37,7 @@ export default function WriteOne() {
 
     const getCategories = async () => {
         const {data} = await ArticleService.getCategories();
-        setCategories(data.filter((i: any) => i.parent_id !== -1))
+        setCategories(data.filter((i: any) => i.parentId !== -1))
     }
 
     useEffect(() => {
@@ -67,23 +68,29 @@ export default function WriteOne() {
         return false;
     };
 
-    const onDraft = async () => {
+    const onDraft = async (e: any) => {
+        e.preventDefault();
         if (!value) return;
         const id = await ArticleService.saveArticleAsDraft({
             content: value,
             author: 'qi-xiao-gu',
-            name: ''
+            categoryId: category,
+            abstract: value.substring(0, 200),
+            name: name
         });
     }
 
 
-    const onPublish = () => {
+    const onPublish = async (e: any) => {
+        e.preventDefault();
         // handlerSubmit();
         if (!value) return;
-        ArticleService.publishArticle({
+        await ArticleService.publishArticle({
             content: value,
             author: 'qi-xiao-gu',
-            name: ''
+            categoryId: category,
+            abstract: value.substring(0, 200),
+            name: name
         });
     }
 

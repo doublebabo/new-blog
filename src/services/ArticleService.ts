@@ -3,8 +3,8 @@ import http from '../utils/http';
 enum apis {
     GetArticles = "articles",
     GetArticle = "article",
-    PublishArticle = "publishArticle",
-    SaveArticleAsDraft = "saveArticleAsDraft",
+    PublishArticle = "actions/publishArticle",
+    SaveArticleAsDraft = "actions/saveArticleAsDraft",
     GetCategories = "getCategories",
     GetWebsiteLatestComments = "getWebsiteLatestComments",
     GetRecommendArticles = "getRecommendArticles",

@@ -6,6 +6,7 @@ import rehypeHighlight from 'rehype-highlight'
 import 'highlight.js/styles/github.css';
 import ArticleService from "../../services/ArticleService";
 import {useParams} from "react-router-dom";
+
 export default function Article() {
     let params = useParams();
     let [md, setMd] = useState("Loading......");

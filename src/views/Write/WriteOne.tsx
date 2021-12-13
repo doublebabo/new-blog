@@ -17,7 +17,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import MySnackbars from "../../components/MySnackbars/MySnackbars";
+import {mySnackbarsMessage} from "../../components/MySnackbars/MySnackbars";
 
 export default function WriteOne() {
     const [value, setValue] = useState(""); // markdownn内容
@@ -70,7 +70,10 @@ export default function WriteOne() {
 
     const onDraft = async (e: any) => {
         e.preventDefault();
-        if (!value) return;
+        if (!value || !category || !name) {
+            mySnackbarsMessage.current.message('warning', '空的地方都要填哦(⊙o⊙)');
+            return;
+        }
         const id = await ArticleService.saveArticleAsDraft({
             content: value,
             author: 'qi-xiao-gu',
@@ -82,9 +85,11 @@ export default function WriteOne() {
 
 
     const onPublish = async (e: any) => {
+        if (!value || !category || !name) {
+            mySnackbarsMessage.current.message('warning', '空的地方都要填哦(⊙o⊙)');
+            return;
+        }
         e.preventDefault();
-        // handlerSubmit();
-        if (!value) return;
         await ArticleService.publishArticle({
             content: value,
             author: 'qi-xiao-gu',
@@ -106,7 +111,6 @@ export default function WriteOne() {
 
     return (
         <div className="write-one">
-            <MySnackbars ref={childRef} type={'warning'} message={'存在必填项未填'}/>
             <form id='form'>
                 <div className={'header'}>
                     <FormControl className={"header-item"}>
@@ -132,7 +136,6 @@ export default function WriteOne() {
                             variant="outlined"
                             startIcon={<PublishIcon/>}
                             onClick={onPublish}
-                            type="submit"
                             color={"primary"}
                     >
                         发布
@@ -142,7 +145,6 @@ export default function WriteOne() {
                             size="large"
                             startIcon={<SaveOutlinedIcon/>}
                             onClick={onDraft}
-                            type="submit"
                     >
                         存为草稿
                     </Button>

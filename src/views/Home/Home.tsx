@@ -13,6 +13,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
+import {mySnackbarsMessage} from "../../components/MySnackbars/MySnackbars";
 
 interface ArticleModel {
     id: number,
@@ -138,6 +139,7 @@ export default class Home2 extends React.Component<any, HomeState> {
             username: 'Nobody',
             message: this.state.comment,
         });
+        mySnackbarsMessage.current.message('success', '哔哔成功！')
         this.handleCommentDialogClose();
         this.getWebsiteLatestComments();
     }
@@ -228,7 +230,7 @@ export default class Home2 extends React.Component<any, HomeState> {
                         <div className={"r-card"}>
                             <div className={"r-card-title"}>哔哔区</div>
                             {
-                                !this.state.websiteLatestComments.length ? '暂无留言' : (
+                                !this.state.websiteLatestComments.length ? '暂无哔哔' : (
                                     this.state.websiteLatestComments.map((item: any) => (
                                         <Link key={item.id} className={'r-card-msg'} to={"#"}>
                                             <FaceIcon/>

@@ -1,7 +1,7 @@
 .nav {
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.8);
-
+  padding: 0.5rem 0;
   .menu-flex-center {
     justify-content: center !important;
   }
@@ -12,11 +12,21 @@
     max-width: 1280px;
 
     .logo {
-      font-size: 2rem;
+      font-size: 1.65rem;
       font-weight: bold;
       cursor: pointer;
       margin: auto;
+      color: #fff;
       margin-left: 1.5rem;
+      padding:0.2rem 0.8rem;
+      border-radius: 10px;
+      animation-name: logoA;
+      animation-duration: 6s;
+      animation-timing-function: ease;
+      animation-delay: 0s;
+      animation-iteration-count: infinite;
+      animation-play-state: running;
+      animation-fill-mode: none;
     }
 
     .logo-right {
@@ -24,7 +34,7 @@
       flex-wrap: nowrap;
       flex-grow: 1;
       justify-content: flex-end;
-
+      align-items: center;
       .search-box {
         border: 1px solid #efefef;
         box-shadow: inset 0 0 5px 2px #efefef;
@@ -36,6 +46,13 @@
         }
       }
     }
+  }
+  @keyframes logoA{
+    0%{background-color: #2196f3;}
+    25%{background-color: #00bcd4;}
+    50%{background-color: #9c27b0;}
+    75%{background-color: #f44336;}
+    100%{background-color: #2196f3;}
   }
 
   .top-icon-show {
@@ -65,7 +82,7 @@
   }
 
   .pc {
-    height: 100%;
+    font-weight: bold;
     font-size: 1.2rem;
   }
   @media screen and (max-width: 960px) {
@@ -75,7 +92,7 @@
 
       .logo {
         font-size: 1.75rem;
-        margin: auto 0 auto 2.5rem;
+        margin: auto 0 auto 1rem;
         font-weight: bold;
       }
 

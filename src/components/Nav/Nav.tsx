@@ -11,7 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Button from "@material-ui/core/Button";
 import CreateIcon from '@material-ui/icons/Create';
 import LoginDialog from "../LoginDialog/LoginDialog";
-
+import HomeIcon from '@material-ui/icons/Home';
 
 
 export default function Nav() {
@@ -56,19 +56,15 @@ export default function Nav() {
             <div className={"nav-container"}>
                 <Link to={"/home"} className={"logo"}>启小谷</Link>
                 <div className={"logo-right"}>
-                    <Button className="pc">
-                        所有类别
-                    </Button>
-                    <Link to={'/writeOne'}>
-                        <Button className="pc">
+                    <Link  to={'/writeOne'}>
+                        <Button color={'primary'} className="pc">
                             <CreateIcon/>写文章
                         </Button>
                     </Link>
-                    <IconButton className="pc"
-                                onClick={onLogin}
-                        color="primary">
-                        <AccountCircleIcon style={{fontSize: 33}}/>
-                    </IconButton>
+                    <Button  onClick={onLogin} className="pc">
+                        <AccountCircleIcon/>登录
+                    </Button>
+                    {/*手机图标*/}
                     <IconButton
                         onClick={handleClick}
                         color="primary" className="phone">

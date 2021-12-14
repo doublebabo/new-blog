@@ -59,12 +59,48 @@ export default class Home2 extends React.Component<any, HomeState> {
     loadingData: boolean = false;
 
 
-    componentDidMount() {
-        this.getArticles();
-        this.getCategories();
-        this.getWebsiteLatestComments();
-        this.getRecommendArticles();
+    async componentDidMount() {
+        const categoriesData = ArticleService.getCategories();
+        const recommendArticlesData = ArticleService.getRecommendArticles();
+        const websiteLatestCommentsData = ArticleService.getWebsiteLatestComments();
         this.listenScroll();
+        this.setState(
+            {
+                categories: [{
+                    id: '',
+                    name: '全部文章'
+                }].concat((await categoriesData).data?.filter((item: any) => item.parentId !== -1) || []),
+                recommendArticles: (await recommendArticlesData).data || [],
+                websiteLatestComments: (await websiteLatestCommentsData).data || [],
+            }
+        )
+        const cacheViews = sessionStorage.getItem('cacheViews')
+        if (cacheViews) {
+            const data: any = JSON.parse(cacheViews)
+            sessionStorage.removeItem('cacheViews');
+            this.queryObj = {...this.queryObj,...data.queryObj};
+            this.setState(
+                {
+                    list: data.list,
+                    activeTag: data.activeTag,
+                }
+            )
+            window.scrollTo({top: data.scrollTop});
+        } else {
+            const listData = ArticleService.getArticles(this.queryObj);
+            this.queryObj.pageIndex++;
+            this.setState(
+                {
+                    list:  (await listData).data || [],
+                }
+            )
+        }
+    }
+
+    componentWillUnmount() {
+        this.setState = (state,callback)=>{
+            return;
+        };
     }
 
     @throttle(500)
@@ -79,15 +115,6 @@ export default class Home2 extends React.Component<any, HomeState> {
         });
     }
 
-    async getCategories() {
-        this.setState({
-            categories: [{
-                id: '',
-                name: '全部文章'
-            }].concat((await ArticleService.getCategories()).data?.filter((item: any) => item.parentId !== -1) || [])
-        })
-    }
-
     listenScroll() {
         window.addEventListener('scroll', () => {
             if (document.documentElement.offsetHeight - (window.screen.height + window.scrollY) <= 300) {
@@ -99,7 +126,6 @@ export default class Home2 extends React.Component<any, HomeState> {
 
     @throttle(500)
     onClickNavTag(e: any) {
-        console.log(this)
         if (this.loadingData) return
         this.setState({
             activeTag: e.name
@@ -110,17 +136,6 @@ export default class Home2 extends React.Component<any, HomeState> {
         this.getArticles(true);
     }
 
-    async getWebsiteLatestComments() {
-        this.setState({
-            websiteLatestComments: (await ArticleService.getWebsiteLatestComments()).data || []
-        })
-    }
-
-    async getRecommendArticles() {
-        this.setState({
-            recommendArticles: (await ArticleService.getRecommendArticles()).data || []
-        })
-    }
 
     handleCommentDialogOpen = () => {
         this.setState({
@@ -141,13 +156,29 @@ export default class Home2 extends React.Component<any, HomeState> {
         });
         mySnackbarsMessage.current.message('success', '哔哔成功！')
         this.handleCommentDialogClose();
-        this.getWebsiteLatestComments();
+        this.setState({
+            websiteLatestComments: (await ArticleService.getWebsiteLatestComments()).data || [],
+        })
     }
 
     onCommentChange = (e: any) => {
         this.setState({
             comment: e.target.value
         })
+    }
+
+    onclickArticle = () => {
+        sessionStorage.setItem('cacheViews', JSON.stringify({
+            list: this.state.list,
+            activeTag: this.state.activeTag,
+            scrollTop: window.scrollY,
+            queryObj: this.queryObj
+        }));
+    }
+
+    loadMore = () => {
+        if (this.noDataAnyMore || this.loadingData) return;
+        this.getArticles();
     }
 
 
@@ -172,7 +203,7 @@ export default class Home2 extends React.Component<any, HomeState> {
                             !this.state.list.length ? (<div className="no-data">
                                 {`暂无${this.state.activeTag}内容`}
                             </div>) : this.state.list.map(item => (
-                                <Link to={`/article/${item.id}`} className={"art-card"} key={item.id}>
+                                <Link to={`/article/${item.id}`} onClick={this.onclickArticle} className={"art-card"} key={item.id}>
                                     <div className={"art-title"}>{item.name}</div>
                                     <div className={"art-abstract"}>{item.abstract}</div>
                                     <div className={"art-bottom"}>
@@ -208,6 +239,11 @@ export default class Home2 extends React.Component<any, HomeState> {
                                 </Link>
                             ))
                         }
+                        <div className={"more-btn"} onClick={this.loadMore}>
+                            <hr/>
+                            {this.noDataAnyMore ? '一滴都没有了┭┮﹏┭┮' : '(●ˇ∀ˇ●)点我加载更多' }
+                        </div>
+
                     </div>
                     <div className={'home-r'}>
                         <div className={"r-card"}>

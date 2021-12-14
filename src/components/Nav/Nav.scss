@@ -16,9 +16,10 @@
       font-weight: bold;
       cursor: pointer;
       margin: auto;
-      color: #fff;
+      //color: #fff;
       margin-left: 1.5rem;
       padding:0.2rem 0.8rem;
+      //background-color: #333;
       border-radius: 10px;
       animation-name: logoA;
       animation-duration: 6s;
@@ -47,13 +48,13 @@
       }
     }
   }
-  @keyframes logoA{
-    0%{background-color: #2196f3;}
-    25%{background-color: #00bcd4;}
-    50%{background-color: #9c27b0;}
-    75%{background-color: #f44336;}
-    100%{background-color: #2196f3;}
-  }
+  //@keyframes logoA{
+  //  0%{background-color: #2196f3;}
+  //  25%{background-color: #00bcd4;}
+  //  50%{background-color: #9c27b0;}
+  //  75%{background-color: #f44336;}
+  //  100%{background-color: #2196f3;}
+  //}
 
   .top-icon-show {
     border: 1px solid #efefef;

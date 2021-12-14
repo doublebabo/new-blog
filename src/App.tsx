@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
 import './App.css';
 import Nav from "./components/Nav/Nav";
-import IndexRoutes from "./routes/IndexRoutes";
 import Footer from "./components/Footer/Footer";
 import MySnackbars from "./components/MySnackbars/MySnackbars";
+import {Outlet} from "react-router-dom";
 
 
 function App({hideLoader,showLoader}: {hideLoader: any, showLoader: any}) {
@@ -11,7 +11,7 @@ function App({hideLoader,showLoader}: {hideLoader: any, showLoader: any}) {
     return (
         <main>
             <Nav/>
-            <IndexRoutes/>
+            <Outlet />
             <Footer/>
             <MySnackbars/>
         </main>

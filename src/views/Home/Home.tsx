@@ -78,7 +78,7 @@ export default class Home2 extends React.Component<any, HomeState> {
         if (cacheViews) {
             const data: any = JSON.parse(cacheViews)
             sessionStorage.removeItem('cacheViews');
-            this.queryObj = {...this.queryObj,...data.queryObj};
+            this.queryObj = {...this.queryObj, ...data.queryObj};
             this.setState(
                 {
                     list: data.list,
@@ -91,14 +91,14 @@ export default class Home2 extends React.Component<any, HomeState> {
             this.queryObj.pageIndex++;
             this.setState(
                 {
-                    list:  (await listData).data || [],
+                    list: (await listData).data || [],
                 }
             )
         }
     }
 
     componentWillUnmount() {
-        this.setState = (state,callback)=>{
+        this.setState = (state, callback) => {
             return;
         };
     }
@@ -204,7 +204,8 @@ export default class Home2 extends React.Component<any, HomeState> {
                             !this.state.list.length ? (<div className="no-data">
                                 {`暂无${this.state.activeTag}内容`}
                             </div>) : this.state.list.map(item => (
-                                <Link to={`/article/${item.id}`} onClick={this.onclickArticle} className={"art-card"} key={item.id}>
+                                <Link to={`/article/${item.id}`} onClick={this.onclickArticle} className={"art-card"}
+                                      key={item.id}>
                                     <div className={"art-title"}>{item.name}</div>
                                     <div className={"art-abstract"}>{item.abstract}</div>
                                     <div className={"art-bottom"}>
@@ -225,7 +226,7 @@ export default class Home2 extends React.Component<any, HomeState> {
                                         <Button
                                             size="small"
                                             className={"art-bottom-item comments"}
-                                            startIcon={<ModeCommentIcon color={"action"} />}
+                                            startIcon={<ModeCommentIcon color={"action"}/>}
                                         >
                                             {item.comment_counts || 0}
                                         </Button>
@@ -242,7 +243,8 @@ export default class Home2 extends React.Component<any, HomeState> {
                         }
                         <div className={"more-btn"} onClick={this.loadMore}>
                             <hr/>
-                            {this.noDataAnyMore ? '一滴都没有了┭┮﹏┭┮' : '(●ˇ∀ˇ●)点我加载更多' }
+                            {this.loadingData ? '用命加载中'
+                                : this.noDataAnyMore ? '一滴都没有了┭┮﹏┭┮' : '(●ˇ∀ˇ●)点我加载更多'}
                         </div>
 
                     </div>

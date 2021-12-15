@@ -25,8 +25,8 @@ instance.interceptors.response.use((res: any) => {
         return res.data
     } else if (res.data.code === '500') {
 
-    } else {
-
+    } else if (res.data.code === '300') {
+        localStorage.removeItem('t');
     }
     mySnackbarsMessage.current.message("error",res.data.msg)
     return res.data

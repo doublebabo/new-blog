@@ -1,18 +1,18 @@
 import React, {useEffect, useState} from "react";
 import './Home.scss';
 import {Link} from "react-router-dom";
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import {Button} from "@material-ui/core";
-import ModeCommentIcon from '@material-ui/icons/ModeComment';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import {Button} from "@mui/material";
+import ModeCommentIcon from '@mui/icons-material/ModeComment';
 import ArticleService from "../../services/ArticleService";
 import {throttle} from "../../decorators/decorator";
-import FaceIcon from '@material-ui/icons/Face';
-import StarsIcon from '@material-ui/icons/Stars';
-import ChildCareIcon from '@material-ui/icons/ChildCare';
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import TextField from "@material-ui/core/TextField";
-import DialogActions from "@material-ui/core/DialogActions";
+import FaceIcon from '@mui/icons-material/Face';
+import StarsIcon from '@mui/icons-material/Stars';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import TextField from "@mui/material/TextField";
+import DialogActions from "@mui/material/DialogActions";
 import {mySnackbarsMessage} from "../../components/MySnackbars/MySnackbars";
 
 interface ArticleModel {
@@ -128,7 +128,8 @@ export default class Home2 extends React.Component<any, HomeState> {
     onClickNavTag(e: any) {
         if (this.loadingData) return
         this.setState({
-            activeTag: e.name
+            activeTag: e.name,
+            // categories: this.state.categories.filter(i => i.id === e.id).concat(this.state.categories.filter(i => i.id != e.id))
         });
         this.queryObj.categoryId = e.id || '';
         this.queryObj.pageIndex = 1;
@@ -210,7 +211,7 @@ export default class Home2 extends React.Component<any, HomeState> {
                                         <Button
                                             size="small"
                                             className={"art-bottom-item read"}
-                                            startIcon={<VisibilityIcon/>}
+                                            startIcon={<VisibilityIcon color={"action"}/>}
                                         >
                                             {item.clicks}
                                         </Button>
@@ -224,7 +225,7 @@ export default class Home2 extends React.Component<any, HomeState> {
                                         <Button
                                             size="small"
                                             className={"art-bottom-item comments"}
-                                            startIcon={<ModeCommentIcon/>}
+                                            startIcon={<ModeCommentIcon color={"action"} />}
                                         >
                                             {item.comment_counts || 0}
                                         </Button>

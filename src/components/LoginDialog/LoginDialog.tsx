@@ -3,13 +3,13 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
-import {TextField} from "@material-ui/core";
+import {TextField} from "@mui/material";
 import {forwardRef, useImperativeHandle, useState} from "react";
-import DialogContent from "@material-ui/core/DialogContent";
+import DialogContent from "@mui/material/DialogContent";
 import ArticleService from "../../services/ArticleService";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import {mySnackbarsMessage} from "../MySnackbars/MySnackbars";
+import IconButton from "@mui/material/IconButton";
 
 function LoginDialog(props: any, ref: any) {
     const [open, setOpen] = React.useState(false);
@@ -21,6 +21,7 @@ function LoginDialog(props: any, ref: any) {
     useImperativeHandle(ref, () => ({
         loginDialogOpen: handleClickOpen,
         loginDialogClose: handleClose,
+        username: loginObj.username
     }));
 
     const handleClickOpen = () => {
@@ -51,15 +52,20 @@ function LoginDialog(props: any, ref: any) {
         const {data} = await ArticleService.login(loginObj);
         if (data) {
             localStorage.setItem('t', data);
-            mySnackbarsMessage.current.message('success', '登录成功');
-            handleClose();
+            window.location.reload();
+        }
+    }
+
+    const onKeyUpSubmit = (event: any) => {
+        if (event.keyCode === 13) {
+            onSubmit();
         }
     }
 
     const onRegister = async () => {
         mySnackbarsMessage.current.message('error', `还没有开放噢噢噢噢`);
         return;
-        await ArticleService.register(loginObj);
+        // await ArticleService.register(loginObj);
     }
 
     return (
@@ -93,12 +99,13 @@ function LoginDialog(props: any, ref: any) {
                     <TextField style={{width: '100%', margin: '1rem 0 '}} type={"password"} label="密码"
                                value={loginObj?.psd}
                                onChange={onPsdChange}
+                               onKeyUp={onKeyUpSubmit}
                                required
                                variant="outlined"/>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={onSubmit} type="submit" size={'large'}>登录</Button>
-                    <Button onClick={onRegister} type="submit" size={'large'}>注册</Button>
+                <DialogActions style={{marginRight: '1.2rem'}}>
+                    <Button onClick={onRegister} type="submit" size={'large'} color={"warning"} variant={"outlined"}>注册</Button>
+                    <Button onClick={onSubmit} type="submit"  size={'large'} variant={"outlined"}>登录</Button>
                 </DialogActions>
             </Dialog>
         </div>

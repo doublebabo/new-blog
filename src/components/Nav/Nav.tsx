@@ -1,102 +1,157 @@
 import React, {MutableRefObject, useEffect, useRef, useState} from "react";
-import {IconButton} from "@material-ui/core";
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import {Link} from "react-router-dom";
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+import {IconButton} from "@mui/material";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import './Nav.scss';
-import MenuIcon from '@material-ui/icons/Menu';
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import CloseIcon from '@material-ui/icons/Close';
-import Button from "@material-ui/core/Button";
-import CreateIcon from '@material-ui/icons/Create';
+import MenuIcon from '@mui/icons-material/Menu';
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import CreateIcon from '@mui/icons-material/Create';
 import LoginDialog from "../LoginDialog/LoginDialog";
-import HomeIcon from '@material-ui/icons/Home';
-
-
+import HomeIcon from '@mui/icons-material/Home';
+import SearchIcon from '@mui/icons-material/Search';
+import Popover from "@mui/material/Popover";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
 export default function Nav() {
 
     const [available, setAvailable] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const loginDialog = useRef<null | any>(null);
+    const [loginStatus, setLoginStatus] = useState({t: localStorage.getItem('t'), username: ''})
+    const [profileMenuAnchorEl, setProfileMenuAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+    const location = useLocation();
+    const params = useParams();
+    const navigateFunction = useNavigate();
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
+    const isArticlePage = location.pathname && location.pathname.startsWith('/article/');
     useEffect(() => {
+        onScrollFn();
+    })
+
+    const onScrollFn = () => {
         window.addEventListener('scroll', function () {
             if (window.scrollY > 200) {
                 if (!available) {
                     setAvailable(true);
                 }
             } else {
-                if (available){
+                if (available) {
                     setAvailable(false);
                 }
             }
         })
-    })
+    }
 
     const onTopIcon = () => {
         window.scrollTo({top: 0})
     }
 
-    const onLogin = () => {
+    const onModifyArticle = () => {
+        navigateFunction("/writeOne/" + params.id);
+    }
+
+    const onLogin = async () => {
         setAnchorEl(null);
         loginDialog?.current.loginDialogOpen();
     }
 
+    const onLogout = () => {
+        setAnchorEl(null);
+        localStorage.removeItem('t');
+        window.location.reload();
+    }
+
+    const handleProfileMenuClose = () => {
+        setProfileMenuAnchorEl(null);
+    }
+    const handleProfileMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setProfileMenuAnchorEl(event.currentTarget);
+    };
+
+    const handleMbClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMbClose = () => {
+        setAnchorEl(null);
+    };
+
     return (
         <div className={"nav"}>
             <div className={"nav-container"}>
-                <Link to={"/home"} className={"logo"}>启小谷</Link>
+                <Link to={"/"} className={"logo"}>启小谷</Link>
                 <div className={"logo-right"}>
-                    <Link  to={'/writeOne'}>
-                        <Button color={'primary'} className="pc">
+                    <Link to={'/writeOne'}>
+                        <Button color={'secondary'} className="pc">
                             <CreateIcon/>写文章
                         </Button>
                     </Link>
-                    <Button  onClick={onLogin} className="pc">
-                        <AccountCircleIcon/>登录
-                    </Button>
+                    {loginStatus.t ?
+                        (<Button className="pc"  aria-owns={Boolean(profileMenuAnchorEl) ? 'profile-menu' : undefined} onClick={handleProfileMenuClick}>
+                            <span style={{fontSize:"1rem", color: "#333"}}>{loginStatus.username || 'anonymous'}</span><ArrowDropDownIcon color={"inherit"} fontSize={"medium"}/>
+                        </Button>)
+                        : (<Button onClick={onLogin} color={'inherit'} className="pc">
+                            <AccountCircleIcon/>登录
+                        </Button>)}
                     {/*手机图标*/}
                     <IconButton
-                        onClick={handleClick}
-                        color="primary" className="phone">
-                        <MenuIcon style={{fontSize: 33}}/>
+                        onClick={handleMbClick}
+                         className="phone">
+                        {Boolean(anchorEl) ? <CloseIcon style={{fontSize: 33}}/> : <MenuIcon style={{fontSize: 33}}/>}
                     </IconButton>
                 </div>
             </div>
-            <div onClick={onTopIcon} className={available ? "top-icon-show" : "hide"}>
-                <ExpandLessIcon style={{fontSize: 33}}/>
-            </div>
+
             <Menu
-                id="simple-menu"
+                id="mb-menu"
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
-                onClose={handleClose}
+                onClose={handleMbClose}
             >
-                <MenuItem style={{justifyContent: "center"}} onClick={handleClose}><CloseIcon/></MenuItem>
-                <MenuItem style={{justifyContent: "center"}} onClick={handleClose}>
-                    <Link to={'/home'}>
-                        Home
+                <MenuItem style={{justifyContent: "center"}} onClick={handleMbClose}>
+                    <Link to={'/'}>
+                        <HomeIcon/>
                     </Link>
                 </MenuItem>
-                <MenuItem style={{justifyContent: "center"}} onClick={handleClose}>搜索</MenuItem>
-                <MenuItem style={{justifyContent: "center"}} onClick={handleClose}>所有类别</MenuItem>
-                <MenuItem style={{justifyContent: "center"}} onClick={handleClose}>
+                <MenuItem style={{justifyContent: "center"}} onClick={handleMbClose}>
+                    <SearchIcon/>
+                </MenuItem>
+                <MenuItem style={{justifyContent: "center"}} onClick={handleMbClose}>所有类别</MenuItem>
+                <MenuItem style={{justifyContent: "center"}} onClick={handleMbClose}>
                     <Link to={'/writeOne'}>
                         写文章
                     </Link>
                 </MenuItem>
-                <MenuItem style={{justifyContent: "center"}} onClick={onLogin}>登录</MenuItem>
+                {loginStatus.t ? <MenuItem style={{justifyContent: "center"}} onClick={onLogout}>登出</MenuItem> :
+                    <MenuItem style={{justifyContent: "center"}} onClick={onLogin}>登录</MenuItem>}
             </Menu>
+
+            <div  className={"top-icon-show"}>
+                {available && <ExpandLessIcon onClick={onTopIcon} className={'float-icon'} fontSize={"medium"}/>}
+                {isArticlePage && <EditIcon onClick={onModifyArticle} className={'float-icon'} fontSize={"medium"} />}
+            </div>
+
+
+
             <LoginDialog ref={loginDialog}/>
+
+            <Popover
+                id="profile-menu"
+                open={Boolean(profileMenuAnchorEl)}
+                anchorEl={profileMenuAnchorEl}
+                onClose={handleProfileMenuClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+            >
+                {loginStatus.t ? <MenuItem style={{justifyContent: "center"}} onClick={onLogout}>登出</MenuItem> :
+                    <MenuItem style={{justifyContent: "center"}} onClick={onLogin}>登录</MenuItem>}
+            </Popover>
         </div>
     );
 }

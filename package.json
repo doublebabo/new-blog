@@ -6,7 +6,8 @@
     "@babel/core": "7.12.3",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@mui/material": "^5.2.3",
+    "@mui/icons-material": "^5.2.4",
+    "@mui/material": "^5.2.4",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
     "@svgr/webpack": "5.5.0",
     "@testing-library/jest-dom": "^5.11.4",
@@ -48,6 +49,7 @@
     "jest-circus": "26.6.0",
     "jest-resolve": "26.6.0",
     "jest-watch-typeahead": "0.6.1",
+    "js-cookie": "^3.0.1",
     "lowlight": "^2.4.1",
     "markdown-navbar": "^1.4.3",
     "mini-css-extract-plugin": "0.11.3",
@@ -166,6 +168,7 @@
     ]
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.1",
     "axios": "^0.24.0",
     "node-sass": "^6.0.1",
     "sass-loader": "^10.2.0"

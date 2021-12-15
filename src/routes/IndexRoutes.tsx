@@ -9,14 +9,7 @@ const WriteOne = React.lazy(() => import("../views/Write/WriteOne"));
 const Article = React.lazy(() => import("../views/Article/Article"));
 const loader = document.querySelector('#load');
 
-// if you want to show the loader when React loads data again
-const showLoader = () => {
-    loader && loader.classList.remove('loader--hide')
-};
 
-const hideLoader = () => {
-    loader && loader.classList.add('loader--hide');
-};
 
 export default function IndexRoutes() {
     useInRouterContext();
@@ -29,7 +22,14 @@ export default function IndexRoutes() {
             </div>
         )
     }
-    debugger
+    // if you want to show the loader when React loads data again
+    const showLoader = () => {
+        loader && loader.classList.remove('loader--hide')
+    };
+
+    const hideLoader = () => {
+        loader && loader.classList.add('loader--hide');
+    };
     return (
         <Routes>
             <Route path="/" element={<App hideLoader={hideLoader} showLoader={showLoader}/>}>
@@ -53,7 +53,6 @@ export default function IndexRoutes() {
                         <Article/>
                     </React.Suspense>
                 }/>
-
                 <Route path="writeOne" element={
                     <React.Suspense fallback={<>...</>}>
                         <WriteOne/>

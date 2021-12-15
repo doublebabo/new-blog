@@ -5,18 +5,18 @@ import "react-mde/lib/styles/css/react-mde-all.css";
 import {ChangeEvent, useEffect, useRef, useState} from "react";
 import remarkGfm from "remark-gfm";
 import './WriteOne.scss'
-import {Button} from "@material-ui/core";
-import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
-import PublishIcon from '@material-ui/icons/Publish';
+import {Button, SelectChangeEvent} from "@mui/material";
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import PublishIcon from '@mui/icons-material/Publish';
 import ArticleService from "../../services/ArticleService";
 import 'highlight.js/styles/github.css';
 import rehypeHighlight from "rehype-highlight";
 import {useParams, useSearchParams} from "react-router-dom";
-import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
+import TextField from "@mui/material/TextField";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import {mySnackbarsMessage} from "../../components/MySnackbars/MySnackbars";
 
 export default function WriteOne() {
@@ -26,7 +26,7 @@ export default function WriteOne() {
 
     const [selectedTab, setSelectedTab] = useState("write");
     const [categories, setCategories] = useState<Array<any>>([]);
-    const childRef = useRef();
+    // const childRef = useRef();
     let [searchParams, setSearchParams] = useSearchParams();
     let params = useParams();
 
@@ -43,7 +43,10 @@ export default function WriteOne() {
     useEffect(() => {
         if (params.id) {
             ArticleService.getArticleObj({id: params.id}).then((res: any) => {
-                setValue(res.data)
+                setValue(res.data.content)
+                setName(res.data.name)
+                setCategory(res.data.categoryId)
+                window.scrollTo({top: 0})
             })
         }
         getCategories();
@@ -74,13 +77,17 @@ export default function WriteOne() {
             mySnackbarsMessage.current.message('warning', '空的地方都要填哦(⊙o⊙)');
             return;
         }
-        const id = await ArticleService.saveArticleAsDraft({
-            content: value,
-            author: 'qi-xiao-gu',
-            categoryId: category,
-            abstract: value.substring(0, 200),
-            name: name
-        });
+        if (params.id) {
+            // todo
+        } else {
+            const id = await ArticleService.saveArticleAsDraft({
+                content: value,
+                author: 'qi-xiao-gu',
+                categoryId: category,
+                abstract: value.substring(0, 200),
+                name: name
+            });
+        }
     }
 
 
@@ -90,16 +97,21 @@ export default function WriteOne() {
             return;
         }
         e.preventDefault();
-        await ArticleService.publishArticle({
-            content: value,
-            author: 'qi-xiao-gu',
-            categoryId: category,
-            abstract: value.substring(0, 200),
-            name: name
-        });
+        if (params.id) {
+            // todo
+        } else {
+            await ArticleService.publishArticle({
+                content: value,
+                author: 'qi-xiao-gu',
+                categoryId: category,
+                abstract: value.substring(0, 200),
+                name: name
+            });
+        }
+
     }
 
-    const onCategoryChange = (event: React.ChangeEvent<any>) => {
+    const onCategoryChange = (event: SelectChangeEvent) => {
         setCategory(event.target.value)
     }
 
@@ -113,10 +125,13 @@ export default function WriteOne() {
         <div className="write-one">
             <form id='form'>
                 <div className={'header'}>
-                    <FormControl className={"header-item"}>
-                        <InputLabel htmlFor="grouped-select">分类</InputLabel>
-                        <Select defaultValue="" required id="grouped-select" name={"category"} value={category}
-                                onChange={onCategoryChange}>
+                    <FormControl  variant="standard" className={"header-item"}>
+                        <InputLabel>分类</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            value={category}
+                            onChange={onCategoryChange}
+                        >
                             {
                                 categories.map(item => (
                                     <MenuItem value={item.id} key={item.id}>{item.name}</MenuItem>
@@ -124,25 +139,20 @@ export default function WriteOne() {
                             }
                         </Select>
                     </FormControl>
-                    <TextField className={"header-item"}
-                               name={"name"}
-                               id="standard-textarea"
-                               label="标题" required
-                               value={name}
-                               onChange={onNameChange}
-                    />
+                    <TextField  variant="standard" id="outlined-basic" label="标题" className={"header-item"} value={name}
+                               onChange={onNameChange}/>
                     <Button className={"header-item"}
                             size="large"
-                            variant="outlined"
+                            variant="contained"
                             startIcon={<PublishIcon/>}
                             onClick={onPublish}
-                            color={"primary"}
+                            color={"success"}
                     >
                         发布
                     </Button>
                     <Button className={"header-item"}
-                            variant="outlined"
                             size="large"
+                            variant="contained"
                             startIcon={<SaveOutlinedIcon/>}
                             onClick={onDraft}
                     >

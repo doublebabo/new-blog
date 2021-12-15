@@ -30,6 +30,9 @@
       min-height: 55vh!important;
       font-size: 2rem;
     }
+    .react-mde.react-mde-tabbed-layout {
+      max-width: 88vw;
+    }
   }
   @media screen and (max-width: 960px){
     width: auto !important;

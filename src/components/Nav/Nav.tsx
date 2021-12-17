@@ -9,18 +9,17 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import CreateIcon from '@mui/icons-material/Create';
-import LoginDialog from "../LoginDialog/LoginDialog";
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import Popover from "@mui/material/Popover";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
+import {loginDialog} from "../LoginDialog/LoginDialog";
 export default function Nav() {
 
     const [available, setAvailable] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const loginDialog = useRef<null | any>(null);
     const [loginStatus, setLoginStatus] = useState({t: localStorage.getItem('t'), username: ''})
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const location = useLocation();
@@ -56,7 +55,7 @@ export default function Nav() {
 
     const onLogin = async () => {
         setAnchorEl(null);
-        loginDialog?.current.loginDialogOpen();
+        loginDialog.current.loginDialogOpen();
     }
 
     const onLogout = () => {
@@ -134,10 +133,6 @@ export default function Nav() {
                 {available && <ExpandLessIcon onClick={onTopIcon} className={'float-icon'} fontSize={"medium"}/>}
                 {isArticlePage && <EditIcon onClick={onModifyArticle} className={'float-icon'} fontSize={"medium"} />}
             </div>
-
-
-
-            <LoginDialog ref={loginDialog}/>
 
             <Popover
                 id="profile-menu"

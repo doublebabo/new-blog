@@ -6,24 +6,35 @@ import rehypeHighlight from 'rehype-highlight'
 import 'highlight.js/styles/github.css';
 import ArticleService from "../../services/ArticleService";
 import {useParams} from "react-router-dom";
+import {dateFormat} from "../../utils/tools";
 
 export default function Article() {
     let params = useParams();
-    let [md, setMd] = useState("Loading......");
+    let [md, setMd] = useState<any>({});
 
     useEffect(() => {
         ArticleService.getArticleObj({id: params.id}).then((res: any) => {
-            setMd(res.data.content)
+            const {content, name, author, updateTime} = res.data;
+            setMd({
+                content: content,
+                name: name,
+                author: author,
+                updateTime: updateTime,
+            })
         })
     }, [params]);
 
     return (
         <div className={"article"}>
-            <div className="md-content">
-                <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}
-                               children={md}
-                               rehypePlugins={[rehypeHighlight]}/>
-            </div>
+            {md.name ? (
+                <div className="md-content">
+                    <div className={'md-title'}>{md.name}</div>
+                    <div className={'md-author'}><span>{dateFormat(md.updateTime)}</span> By <span>{md.author}</span></div>
+                    <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}
+                                   children={md.content}
+                                   rehypePlugins={[rehypeHighlight]}/>
+                </div>
+            ) : <div className="md-loading">Loading.....</div>}
         </div>
     );
 };

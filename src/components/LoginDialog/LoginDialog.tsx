@@ -11,7 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import {mySnackbarsMessage} from "../MySnackbars/MySnackbars";
 import IconButton from "@mui/material/IconButton";
 
-function LoginDialog(props: any, ref: any) {
+const MyLoginDialog = forwardRef((props: any, ref: any) => {
     const [open, setOpen] = React.useState(false);
     const [loginObj, setLoginObj] = useState<any>({
         username: '',
@@ -21,7 +21,6 @@ function LoginDialog(props: any, ref: any) {
     useImperativeHandle(ref, () => ({
         loginDialogOpen: handleClickOpen,
         loginDialogClose: handleClose,
-        username: loginObj.username
     }));
 
     const handleClickOpen = () => {
@@ -81,7 +80,7 @@ function LoginDialog(props: any, ref: any) {
                     justifyContent: 'space-between',
                     paddingBottom: 0
                 }}>
-                    {"登录"}
+                    {"请登录"}
                     <IconButton
                         aria-label="close"
                         onClick={handleClose}
@@ -110,6 +109,10 @@ function LoginDialog(props: any, ref: any) {
             </Dialog>
         </div>
     );
-}
+})
 
-export default forwardRef(LoginDialog);
+export const loginDialog: any = React.createRef();
+
+const GlobalLoginDialog = () => (<MyLoginDialog ref={loginDialog}/>)
+export default  GlobalLoginDialog;
+

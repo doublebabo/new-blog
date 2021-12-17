@@ -1,5 +1,12 @@
-import React from "react";
+import React, {useEffect} from "react";
 import './Login.scss';
 export default function Login() {
-    return (<h2>Login page</h2>);
+
+    useEffect(() => {
+        // loginDialog.current.loginDialogOpen();
+    });
+
+    return (<div className={'login'}>
+        {/*<LoginDialog ref={loginDialog}/>*/}
+    </div>);
 };

@@ -1,11 +1,12 @@
 import {mySnackbarsMessage} from '../components/MySnackbars/MySnackbars';
+import {useNavigate} from "react-router-dom";
+import {loginDialog} from "../components/LoginDialog/LoginDialog";
 const axios = require('axios');
 const instance = axios.create({
     baseURL: process.env.NODE_ENV === 'development' ? 'http://192.168.1.102:8000/' : '/',
     timeout: 15000,
     // headers: {'X-Custom-Header': 'foobar'}
 });
-
 // request拦截器
 instance.interceptors.request.use((request: any) => {
     if (localStorage.getItem('t')) {
@@ -27,9 +28,10 @@ instance.interceptors.response.use((res: any) => {
 
     } else if (res.data.code === '300') {
         localStorage.removeItem('t');
+        loginDialog.current.loginDialogOpen();
     }
     mySnackbarsMessage.current.message("error",res.data.msg)
-    return res.data
+    throw new Error(res.data.msg)
 }, (error: any) => {
     return Promise.reject(error)
 });

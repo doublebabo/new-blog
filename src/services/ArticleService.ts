@@ -10,6 +10,9 @@ enum apis {
     GetRecommendArticles = "getRecommendArticles",
     AddNewWebsiteComment = "addNewWebsiteComment",
     Login = "login",
+    UpdateDraft = "actions/updateDraft",
+    UpdateArticleAndPublish = "actions/updateArticleAndPublish",
+    UploadImage = "actions/uploadImage",
 }
 
 export default class ArticleService {
@@ -27,6 +30,14 @@ export default class ArticleService {
 
     static publishArticle = (params: any): Promise<any> => {
         return http.post(apis.PublishArticle, params);
+    }
+
+    static updateArticleAndPublish =(params: any): Promise<any> => {
+        return http.post(apis.UpdateArticleAndPublish, params);
+    }
+
+    static updateDraft =(params: any): Promise<any> => {
+        return http.post(apis.UpdateDraft, params);
     }
 
     static saveArticleAsDraft =(params: any): Promise<any> => {
@@ -55,5 +66,9 @@ export default class ArticleService {
 
     static register =(params: any): Promise<any> => {
         return http.post(apis.Login, params);
+    }
+
+    static uploadImage =(params: any): Promise<any> => {
+        return http.post(apis.UploadImage, params );
     }
 }

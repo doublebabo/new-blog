@@ -65,13 +65,14 @@
     right: 5%;
     bottom: 20%;
     z-index: 1;
-    background: rgba(200, 200, 200, 0.4);
+    background: rgba(3, 169, 244, 0.6);
+    color: #fff;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     .float-icon {
-      margin: 1rem;
+      padding: 1rem;
       transition: all .2s ease-in-out;
 
     }
@@ -116,7 +117,7 @@
       right: 9px;
       bottom: 30%;
       .float-icon {
-        margin: .7rem;
+        padding: .7rem;
       }
     }
 

@@ -1,39 +1,33 @@
 import * as React from "react";
-import ReactMde from "react-mde";
+import ReactMde, {L18n} from "react-mde";
 import ReactMarkdown from "react-markdown";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import {ChangeEvent, useEffect, useRef, useState} from "react";
 import remarkGfm from "remark-gfm";
 import './WriteOne.scss'
 import {Button, SelectChangeEvent} from "@mui/material";
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import PublishIcon from '@mui/icons-material/Publish';
-import ArticleService from "../../services/ArticleService";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
 import 'highlight.js/styles/github.css';
 import rehypeHighlight from "rehype-highlight";
-import {useParams, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import {mySnackbarsMessage} from "../../components/MySnackbars/MySnackbars";
+import ArticleService from "../../services/ArticleService";
 
 export default function WriteOne() {
     const [value, setValue] = useState(""); // markdownn内容
     const [name, setName] = useState(""); // 文章名字
     const [category, setCategory] = useState(""); // 文章类别
-
     const [selectedTab, setSelectedTab] = useState("write");
     const [categories, setCategories] = useState<Array<any>>([]);
-    // const childRef = useRef();
     let [searchParams, setSearchParams] = useSearchParams();
+    const navigateFunction = useNavigate();
     let params = useParams();
-
-    const handlerSubmit = () => {
-        // @ts-ignore
-        // childRef.current.handleClick();
-    }
 
     const getCategories = async () => {
         const {data} = await ArticleService.getCategories();
@@ -48,27 +42,24 @@ export default function WriteOne() {
                 setCategory(res.data.categoryId)
                 window.scrollTo({top: 0})
             })
+        } else {
+            setValue('')
+            setName('')
+            setCategory('')
         }
         getCategories();
-    }, []);
+    }, [params]);
 
     const save = async function* (data: any) {
-        // Promise that waits for "time" milliseconds
-        const wait = function (time: any) {
-            return new Promise((a: any, r) => {
-                setTimeout(() => a(), time);
-            });
-        };
-        // Upload "data" to your server
-        // Use XMLHttpRequest.send to send a FormData object containing
-        // "data"
-        // Check this question: https://stackoverflow.com/questions/18055422/how-to-receive-php-image-data-over-copy-n-paste-javascript-with-xmlhttprequest
-        await wait(2000);
-        // yields the URL that should be inserted in the markdown
-        yield "https://picsum.photos/300";
-        await wait(2000);
-        // returns true meaning that the save was successful
-        return false;
+        const form = new FormData();
+        form.append('image', new Blob([data]), 'img')
+        try {
+            const src = await ArticleService.uploadImage(form)
+            yield "http://192.168.1.102:8000/image-store/" + src.data;
+            return true;
+        } catch (e) {
+            return false;
+        }
     };
 
     const onDraft = async (e: any) => {
@@ -77,38 +68,51 @@ export default function WriteOne() {
             mySnackbarsMessage.current.message('warning', '空的地方都要填哦(⊙o⊙)');
             return;
         }
-        if (params.id) {
-            // todo
-        } else {
-            const id = await ArticleService.saveArticleAsDraft({
-                content: value,
-                author: 'qi-xiao-gu',
-                categoryId: category,
-                abstract: value.substring(0, 200),
-                name: name
-            });
+        const postData: any = {
+            content: value,
+            author: 'qi-xiao-gu',
+            categoryId: category,
+            abstract: value.substring(0, 200),
+            name: name
+        }
+        try {
+            if (params.id) {
+                postData.id = params.id
+                await ArticleService.updateDraft(postData)
+            } else {
+                await ArticleService.saveArticleAsDraft(postData)
+            }
+            mySnackbarsMessage.current.message('success', '保存成功');
+            navigateFunction('/')
+        } catch (e) {
         }
     }
 
 
     const onPublish = async (e: any) => {
+        e.preventDefault();
         if (!value || !category || !name) {
             mySnackbarsMessage.current.message('warning', '空的地方都要填哦(⊙o⊙)');
             return;
         }
-        e.preventDefault();
-        if (params.id) {
-            // todo
-        } else {
-            await ArticleService.publishArticle({
-                content: value,
-                author: 'qi-xiao-gu',
-                categoryId: category,
-                abstract: value.substring(0, 200),
-                name: name
-            });
+        const postData: any = {
+            content: value,
+            author: 'qi-xiao-gu',
+            categoryId: category,
+            abstract: value.substring(0, 200),
+            name: name
         }
-
+        try {
+            if (params.id) {
+                postData.id = params.id
+                await ArticleService.updateArticleAndPublish(postData)
+            } else {
+                await ArticleService.publishArticle(postData)
+            }
+            mySnackbarsMessage.current.message('success', '保存成功');
+            navigateFunction('/article/' + params.id)
+        } catch (e) {
+        }
     }
 
     const onCategoryChange = (event: SelectChangeEvent) => {
@@ -120,12 +124,11 @@ export default function WriteOne() {
     }
 
 
-
     return (
         <div className="write-one">
-            <form id='form'>
+            <div className={'write-one-container'}>
                 <div className={'header'}>
-                    <FormControl  variant="standard" className={"header-item"}>
+                    <FormControl variant="standard" className={"header-item"}>
                         <InputLabel>分类</InputLabel>
                         <Select
                             labelId="demo-simple-select-label"
@@ -139,27 +142,24 @@ export default function WriteOne() {
                             }
                         </Select>
                     </FormControl>
-                    <TextField  variant="standard" id="outlined-basic" label="标题" className={"header-item"} value={name}
+                    <TextField variant="standard" id="outlined-basic" label="标题" className={"header-item"} value={name}
                                onChange={onNameChange}/>
-                    <Button className={"header-item"}
-                            size="large"
-                            variant="contained"
-                            startIcon={<PublishIcon/>}
-                            onClick={onPublish}
-                            color={"success"}
-                    >
-                        发布
-                    </Button>
-                    <Button className={"header-item"}
-                            size="large"
-                            variant="contained"
-                            startIcon={<SaveOutlinedIcon/>}
-                            onClick={onDraft}
-                    >
-                        存为草稿
-                    </Button>
+                    <div style={{marginLeft: 'auto'}}>
+                        <Button className={"header-item-obj"}
+                                variant={'outlined'}
+                                onClick={onPublish}
+                                color={"success"}
+                        >
+                            发布
+                        </Button>
+                        <Button className={"header-item-obj"}
+                                variant={'outlined'}
+                                onClick={onDraft}
+                        >
+                            存为草稿
+                        </Button>
+                    </div>
                 </div>
-
                 <div className="md-container">
                     <ReactMde
                         value={value}
@@ -174,9 +174,14 @@ export default function WriteOne() {
                         paste={{
                             saveImage: save
                         }}
+                        l18n={{
+                            write: <EditIcon/> ,
+                            preview: <VisibilityIcon/>,
+                            pasteDropSelect: '点我上传照片（*PC端支持图片拖拽 / 截图粘贴 / 文件选择）',
+                        } as L18n}
                     />
                 </div>
-            </form>
+            </div>
         </div>
     );
 }

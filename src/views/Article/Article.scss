@@ -11,6 +11,30 @@
     border-radius: 5px;
     box-shadow: 0 0 6px 2px #efefef;
     word-break: break-word;
+    img {
+      max-height: 450px;
+      max-width: 100%;
+    }
+    .md-title {
+      font-weight: bolder;
+      font-size: 2.5rem;
+      text-align: center;
+    }
+
+    .md-author {
+      text-align: center;
+      font-weight: bold;
+      color: #4e5358;
+      padding: 0.7rem;
+    }
+
+  }
+
+  .md-loading {
+    text-align: center;
+    font-weight: bolder;
+    font-size: 2rem;
+    margin: 2rem;
   }
   @media screen and (max-width: 960px){
     display: block;

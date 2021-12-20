@@ -2,6 +2,7 @@ import React from 'react';
 import {MemoryRouter, Route, Routes, useInRouterContext} from 'react-router-dom';
 import NotFound from "../views/404/NotFound";
 import App from "../App";
+import MyChattingRoom from "../components/ChatingRoom/ChattingRoom";
 
 const Login = React.lazy(() => import("../views/Login/Login"));
 const Home = React.lazy(() => import("../views/Home/Home"));

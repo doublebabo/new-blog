@@ -35,6 +35,7 @@ export default function WriteOne() {
     }
 
     useEffect(() => {
+        window.scrollTo({top: 0})
         if (params.id) {
             ArticleService.getArticleObj({id: params.id}).then((res: any) => {
                 setValue(res.data.content)
@@ -123,6 +124,19 @@ export default function WriteOne() {
         setName(event.target.value)
     }
 
+    const onDelete = async () => {
+        if (params.id) {
+            try {
+                const {msg} = await ArticleService.deleteArticle({id: params.id})
+                mySnackbarsMessage.current.message('success', msg);
+                navigateFunction('/');
+            } catch (e) {
+            }
+        } else {
+            mySnackbarsMessage.current.message('warning', '尚未保存到数据库');
+        }
+    };
+
 
     return (
         <div className="write-one">
@@ -146,17 +160,24 @@ export default function WriteOne() {
                                onChange={onNameChange}/>
                     <div style={{marginLeft: 'auto'}}>
                         <Button className={"header-item-obj"}
-                                variant={'outlined'}
-                                onClick={onPublish}
-                                color={"success"}
+                                onClick={onDelete}
+                                color={"error"}
+                                size={"large"}
                         >
-                            发布
+                            删除
                         </Button>
                         <Button className={"header-item-obj"}
-                                variant={'outlined'}
                                 onClick={onDraft}
+                                size={"large"}
                         >
                             存为草稿
+                        </Button>
+                        <Button className={"header-item-obj"}
+                                onClick={onPublish}
+                                color={"success"}
+                                size={"large"}
+                        >
+                            发布
                         </Button>
                     </div>
                 </div>
@@ -175,7 +196,7 @@ export default function WriteOne() {
                             saveImage: save
                         }}
                         l18n={{
-                            write: <EditIcon/> ,
+                            write: <EditIcon/>,
                             preview: <VisibilityIcon/>,
                             pasteDropSelect: '点我上传照片（*PC端支持图片拖拽 / 截图粘贴 / 文件选择）',
                         } as L18n}

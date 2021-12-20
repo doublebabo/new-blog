@@ -13,6 +13,8 @@ enum apis {
     UpdateDraft = "actions/updateDraft",
     UpdateArticleAndPublish = "actions/updateArticleAndPublish",
     UploadImage = "actions/uploadImage",
+    DeleteArticle = "actions/deleteArticle",
+    Ip = "https://ip.tool.lu/",
 }
 
 export default class ArticleService {
@@ -71,4 +73,20 @@ export default class ArticleService {
     static uploadImage =(params: any): Promise<any> => {
         return http.post(apis.UploadImage, params );
     }
+    static deleteArticle =(params: any): Promise<any> => {
+        return http.post(apis.DeleteArticle, params );
+    }
+
+    static getIpInfo =(fn: Function) => {
+        let s = document.createElement('script');
+        s.src = 'http://pv.sohu.com/cityjson?ie=utf-8';
+        //var returnCitySN = {"cip": "223.167.168.195", "cid": "310000", "cname": "上海市"};
+        s.onload = () => {
+            localStorage.setItem('ip', (window as any).returnCitySN['cip'])
+            localStorage.setItem('location', (window as any).returnCitySN['cname'])
+            fn()
+        };
+        document.body.append(s);
+    }
+
 }

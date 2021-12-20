@@ -44,8 +44,10 @@
 
 
   .md-container {
+    white-space: pre-line;;
+    word-break:  break-all;
     .mde-text {
-      min-height: 55vh!important;
+      min-height: 70vh!important;
       font-size: 1.2rem;
     }
     .image-tip {

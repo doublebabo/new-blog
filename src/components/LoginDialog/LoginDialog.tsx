@@ -48,9 +48,10 @@ const MyLoginDialog = forwardRef((props: any, ref: any) => {
             mySnackbarsMessage.current.message('error', `用户名/密码都没填吖你 (●'◡'●)`);
             return
         }
-        const {data} = await ArticleService.login(loginObj);
-        if (data) {
-            localStorage.setItem('t', data);
+        const {t,u} = (await ArticleService.login(loginObj)).data;
+        if (t) {
+            localStorage.setItem('t', t);
+            localStorage.setItem('u', u);
             window.location.reload();
         }
     }

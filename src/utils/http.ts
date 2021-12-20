@@ -1,6 +1,7 @@
 import {mySnackbarsMessage} from '../components/MySnackbars/MySnackbars';
 import {useNavigate} from "react-router-dom";
 import {loginDialog} from "../components/LoginDialog/LoginDialog";
+
 const axios = require('axios');
 const instance = axios.create({
     baseURL: process.env.NODE_ENV === 'development' ? 'http://192.168.1.102:8000/' : '/',
@@ -11,6 +12,11 @@ const instance = axios.create({
 instance.interceptors.request.use((request: any) => {
     if (localStorage.getItem('t')) {
         request.headers['Authorization'] = localStorage.getItem('t');
+    } else {
+        if (request.url.startsWith('actions/') ) {
+            loginDialog.current.loginDialogOpen();
+            return;
+        }
     }
     return request
 }, (error: any) => {
@@ -28,9 +34,10 @@ instance.interceptors.response.use((res: any) => {
 
     } else if (res.data.code === '300') {
         localStorage.removeItem('t');
+        localStorage.removeItem('u');
         loginDialog.current.loginDialogOpen();
     }
-    mySnackbarsMessage.current.message("error",res.data.msg)
+    mySnackbarsMessage.current.message("error", res.data.msg)
     throw new Error(res.data.msg)
 }, (error: any) => {
     return Promise.reject(error)

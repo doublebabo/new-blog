@@ -16,7 +16,7 @@ export default function Article() {
         ArticleService.getArticleObj({id: params.id}).then((res: any) => {
             const {content, name, author, updateTime} = res.data;
             setMd({
-                content: content,
+                content: content ||'NOTHING',
                 name: name,
                 author: author,
                 updateTime: updateTime,
@@ -26,7 +26,7 @@ export default function Article() {
 
     return (
         <div className={"article"}>
-            {md.name ? (
+            {md.content ? (
                 <div className="md-content">
                     <div className={'md-title'}>{md.name}</div>
                     <div className={'md-author'}><span>{dateFormat(md.updateTime)}</span> By <span>{md.author}</span></div>

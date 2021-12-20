@@ -14,6 +14,7 @@ import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 import DialogActions from "@mui/material/DialogActions";
 import {mySnackbarsMessage} from "../../components/MySnackbars/MySnackbars";
+import {ScrollDirectionContext} from "../../App";
 
 interface ArticleModel {
     id: number,
@@ -49,6 +50,8 @@ export default class Home2 extends React.Component<any, HomeState> {
         };
     }
 
+    static contextType = ScrollDirectionContext;
+
     queryObj = {
         pageIndex: 1,
         pageSize: 10,
@@ -63,7 +66,9 @@ export default class Home2 extends React.Component<any, HomeState> {
         const categoriesData = ArticleService.getCategories();
         const recommendArticlesData = ArticleService.getRecommendArticles();
         const websiteLatestCommentsData = ArticleService.getWebsiteLatestComments();
+        const listData = ArticleService.getArticles(this.queryObj);
         this.listenScroll();
+        this.queryObj.pageIndex++;
         this.setState(
             {
                 categories: [{
@@ -72,29 +77,10 @@ export default class Home2 extends React.Component<any, HomeState> {
                 }].concat((await categoriesData).data?.filter((item: any) => item.parentId !== -1) || []),
                 recommendArticles: (await recommendArticlesData).data || [],
                 websiteLatestComments: (await websiteLatestCommentsData).data || [],
+                list: (await listData).data || [],
             }
         )
-        const cacheViews = sessionStorage.getItem('cacheViews')
-        if (cacheViews) {
-            const data: any = JSON.parse(cacheViews)
-            sessionStorage.removeItem('cacheViews');
-            this.queryObj = {...this.queryObj, ...data.queryObj};
-            this.setState(
-                {
-                    list: data.list,
-                    activeTag: data.activeTag,
-                }
-            )
-            window.scrollTo({top: data.scrollTop});
-        } else {
-            const listData = ArticleService.getArticles(this.queryObj);
-            this.queryObj.pageIndex++;
-            this.setState(
-                {
-                    list: (await listData).data || [],
-                }
-            )
-        }
+        console.log(this.context)
     }
 
     componentWillUnmount() {
@@ -168,14 +154,6 @@ export default class Home2 extends React.Component<any, HomeState> {
         })
     }
 
-    onclickArticle = () => {
-        sessionStorage.setItem('cacheViews', JSON.stringify({
-            list: this.state.list,
-            activeTag: this.state.activeTag,
-            scrollTop: window.scrollY,
-            queryObj: this.queryObj
-        }));
-    }
 
     loadMore = () => {
         if (this.noDataAnyMore || this.loadingData) return;
@@ -188,7 +166,7 @@ export default class Home2 extends React.Component<any, HomeState> {
         return (
             <div className={"home-outer"}>
                 <div className={"home"}>
-                    <div className="nav-tags">
+                    <div className={this.context === 'up' ? "nav-tags" : "nav-tags  up"}>
                         {
                             this.state.categories.map((item: any) => (
                                 <div onClick={() => this.onClickNavTag({id: item.id, name: item.name})}
@@ -204,7 +182,7 @@ export default class Home2 extends React.Component<any, HomeState> {
                             !this.state.list.length ? (<div className="no-data">
                                 {`暂无${this.state.activeTag}内容`}
                             </div>) : this.state.list.map(item => (
-                                <Link target={'_blank'} to={`/article/${item.id}`} onClick={this.onclickArticle} className={"art-card"}
+                                <Link target={'_blank'} to={`/article/${item.id}`} className={"art-card"}
                                       key={item.id}>
                                     <div className={"art-title"}>{item.name}</div>
                                     <div className={"art-abstract"}>{item.abstract}</div>
@@ -248,7 +226,7 @@ export default class Home2 extends React.Component<any, HomeState> {
                         </div>
 
                     </div>
-                    <div className={'home-r'}>
+                    <div className={this.context === 'up' ? "home-r" : "home-r  up"}>
                         <div className={"r-card"}>
                             <div className={"r-card-title"}>推荐使用</div>
                             {

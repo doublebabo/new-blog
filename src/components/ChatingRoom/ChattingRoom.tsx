@@ -51,10 +51,13 @@ const ChattingRoom = forwardRef((props: any, ref: any) => {
     useEffect(() => {
         if (visible) {
             document.body.style.overflow = 'hidden';
+            document.body.classList.add('body-overlay');
             socketInstance();
+            const chatScroll = document.getElementsByClassName('room-context')[0];
+            chatScroll.scrollTo({top: chatScroll.scrollHeight});
         } else {
             document.body.style.overflow = 'auto';
-            socket.disconnect();
+            document.body.classList.remove('body-overlay');
         }
     }, [visible]);
 
@@ -68,6 +71,7 @@ const ChattingRoom = forwardRef((props: any, ref: any) => {
 
 
     const socketInstance = () => {
+        if (socket.connected) return;
         socket.connect();
         socket.emit('addUser', {
             username: loginUsername,
@@ -77,7 +81,7 @@ const ChattingRoom = forwardRef((props: any, ref: any) => {
         socket.on('userList', (ev) => {
             setUserCount(ev)
         });
-        socket.on('clientMsg', (ev) => {
+        socket.on('chart:message', (ev) => {
             onReceiveMsg(ev);
         });
         socket.on('gTalk', (ev) => {
@@ -99,7 +103,7 @@ const ChattingRoom = forwardRef((props: any, ref: any) => {
 
     const onSendMsg = async () => {
         if (!trim(text)) return;
-        socket.emit("serverMsg", {text: trim(text), username: loginUsername, ip: localStorage.getItem('ip'), location: localStorage.getItem('location')})
+        socket.emit("chart:message", {text: trim(text), username: loginUsername, ip: localStorage.getItem('ip'), location: localStorage.getItem('location')})
         localStorage.setItem('cD', JSON.stringify(chatData.filter(i => !i.flag)));
         setText('');
         setChatData((pre) => [...pre, {username: loginUsername, time: new Date().getTime(), text: trim(text)}]);
@@ -119,20 +123,22 @@ const ChattingRoom = forwardRef((props: any, ref: any) => {
                         onClick={onClose}><CloseIcon/></IconButton></div>
                     <ul className={"room-context"}>
                         {chatData.length ? chatData.map(item => (
-                            item.flag ? (
-                                <li key={item.username + item.time} className="room-notification">
-                                    <span>系统消息  {dateFormatForChat(item.time)}</span>
-                                    <div>{item.text}</div>
-                                </li>
-                            ) : (
-                                <li key={item.username + item.time}
-                                    className={item.username === loginUsername ? 'chat-box self' : 'chat-box'}>
-                                    <div className={'user'}>{item.username} {dateFormatForChat(item.time)}</div>
-                                    <div className={'user-msg'}>
-                                        <div className={"msg-detail"}>{item.text}</div>
-                                    </div>
-                                </li>
-                            )
+                            <div key={item.username + item.time}>
+                                {item.flag ? (
+                                    <li className="room-notification">
+                                        <span>系统消息 {dateFormatForChat(item.time)}</span>
+                                        <div>{item.text}</div>
+                                    </li>
+                                ) : (
+                                    <li
+                                        className={item.username === loginUsername ? 'chat-box self' : 'chat-box'}>
+                                        <div className={'user'}>{item.username} {dateFormatForChat(item.time)}</div>
+                                        <div className={'user-msg'}>
+                                            <div className={"msg-detail"}>{item.text}</div>
+                                        </div>
+                                    </li>
+                                )}
+                            </div>
                         )) : <div className={'system-msg'}>暂时没人聊天欸.......................</div>}
                     </ul>
                     <div className={"room-bottom"}>

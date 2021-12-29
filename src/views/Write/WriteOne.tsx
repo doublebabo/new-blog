@@ -18,6 +18,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import {mySnackbarsMessage} from "../../components/MySnackbars/MySnackbars";
 import ArticleService from "../../services/ArticleService";
+import instance from "../../utils/http";
 
 export default function WriteOne() {
     const [value, setValue] = useState(""); // markdownn内容
@@ -56,7 +57,7 @@ export default function WriteOne() {
         form.append('image', new Blob([data]), 'img')
         try {
             const src = await ArticleService.uploadImage(form)
-            yield "http://192.168.1.102:8000/image-store/" + src.data;
+            yield instance.baseURL + "image-store/" + src.data;
             return true;
         } catch (e) {
             return false;

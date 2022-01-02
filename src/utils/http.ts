@@ -4,11 +4,11 @@ import {loginDialog} from "../components/LoginDialog/LoginDialog";
 
 const axios = require('axios');
 const instance = axios.create({
-    baseURL: process.env.NODE_ENV === 'development' ? 'http://192.168.1.101:8000/' : '/api',
+    baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:8000/' : '/api',
     timeout: 15000,
     // headers: {'X-Custom-Header': 'foobar'}
 });
-instance.baseURL = process.env.NODE_ENV === 'development' ? 'http://192.168.1.101:8000/' : '/api';
+instance.baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:8000/' : '/api';
 // request拦截器
 instance.interceptors.request.use((request: any) => {
     if (localStorage.getItem('t')) {

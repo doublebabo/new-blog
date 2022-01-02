@@ -182,7 +182,7 @@ export default class Home2 extends React.Component<any, HomeState> {
                             !this.state.list.length ? (<div className="no-data">
                                 {`暂无${this.state.activeTag}内容`}
                             </div>) : this.state.list.map(item => (
-                                <Link target={'_blank'} to={`/article/${item.id}`} className={"art-card"}
+                                <Link  to={`/article/${item.id}`} className={"art-card"}
                                       key={item.id}>
                                     <div className={"art-title"}>{item.name}</div>
                                     <div className={"art-abstract"}>{item.abstract}</div>
@@ -232,7 +232,7 @@ export default class Home2 extends React.Component<any, HomeState> {
                             {
                                 !this.state.recommendArticles.length ? '暂无推荐' : (
                                     this.state.recommendArticles.map((item: any) => (
-                                        <Link key={item.id} target={'_blank'} to={`/Article/${item.id}`} className={'r-card-content'}>
+                                        <Link key={item.id}  to={`/Article/${item.id}`} className={'r-card-content'}>
                                             <StarsIcon/>
                                             <div className={"r-card-content-msg"}>{item.name}</div>
                                         </Link>

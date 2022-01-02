@@ -114,7 +114,7 @@ export default function Nav() {
                 <div className={"nav-container"}>
                     <Link to={"/"} className={"logo"}>启小谷</Link>
                     <div className={"logo-right"}>
-                        <Link to={'/writeOne'} target={'_blank'}>
+                        <Link to={'/writeOne'} >
                             <Button color={'secondary'} className="pc">
                                 <CreateIcon/>写文章
                             </Button>

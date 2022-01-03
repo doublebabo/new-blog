@@ -1,8 +1,8 @@
 import React from 'react';
-import {MemoryRouter, Route, Routes, useInRouterContext} from 'react-router-dom';
+import {Route, Routes, useInRouterContext} from 'react-router-dom';
 import NotFound from "../views/404/NotFound";
 import App from "../App";
-import MyChattingRoom from "../components/ChatingRoom/ChattingRoom";
+// import MyChattingRoom from "../components/ChatingRoom/ChattingRoom";
 
 const Login = React.lazy(() => import("../views/Login/Login"));
 const Home = React.lazy(() => import("../views/Home/Home"));
@@ -14,15 +14,15 @@ const loader = document.querySelector('#load');
 
 export default function IndexRoutes() {
     useInRouterContext();
-    const renderChildren = (props: any) => {
-        const {match} = props;
-        return (
-            <div style={match ? {} : {position: 'absolute', zIndex: -10}}>
-                {/*// 如果匹配到了就直接渲染出来，如果没有匹配到，就直接隐藏掉该组件，但是此时组件是不会销毁的，这样就能保证在返回后页面状态的保留*/}
-                {/*<Component /> // 这个就是该路由下对应的组件*/}
-            </div>
-        )
-    }
+    // const renderChildren = (props: any) => {
+    //     const {match} = props;
+    //     return (
+    //         <div style={match ? {} : {position: 'absolute', zIndex: -10}}>
+    //             {/*// 如果匹配到了就直接渲染出来，如果没有匹配到，就直接隐藏掉该组件，但是此时组件是不会销毁的，这样就能保证在返回后页面状态的保留*/}
+    //             {/*<Component /> // 这个就是该路由下对应的组件*/}
+    //         </div>
+    //     )
+    // }
     // if you want to show the loader when React loads data again
     const showLoader = () => {
         loader && loader.classList.remove('loader--hide')

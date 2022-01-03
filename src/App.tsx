@@ -35,7 +35,7 @@ function App({hideLoader}: {hideLoader: any, showLoader?: any}) {
         };
     },[scrollDirection])
 
-    useEffect(hideLoader,[]);
+    useEffect(hideLoader,[hideLoader]);
     return (
         <main>
             <ScrollDirectionContext.Provider value={scrollDirection}>

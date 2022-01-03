@@ -2,7 +2,7 @@ import * as React from "react";
 import ReactMde, {L18n} from "react-mde";
 import ReactMarkdown from "react-markdown";
 import "react-mde/lib/styles/css/react-mde-all.css";
-import {ChangeEvent, useEffect, useRef, useState} from "react";
+import {  useEffect,  useState} from "react";
 import remarkGfm from "remark-gfm";
 import './WriteOne.scss'
 import {Button, SelectChangeEvent} from "@mui/material";
@@ -10,7 +10,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import 'highlight.js/styles/github.css';
 import rehypeHighlight from "rehype-highlight";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
@@ -18,7 +18,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import {mySnackbarsMessage} from "../../components/MySnackbars/MySnackbars";
 import ArticleService from "../../services/ArticleService";
-import instance from "../../utils/http";
 
 export default function WriteOne() {
     const [value, setValue] = useState(""); // markdownn内容
@@ -26,7 +25,7 @@ export default function WriteOne() {
     const [category, setCategory] = useState(""); // 文章类别
     const [selectedTab, setSelectedTab] = useState("write");
     const [categories, setCategories] = useState<Array<any>>([]);
-    let [searchParams, setSearchParams] = useSearchParams();
+    // let [searchParams, setSearchParams] = useSearchParams();
     const navigateFunction = useNavigate();
     let params = useParams();
 
@@ -56,8 +55,8 @@ export default function WriteOne() {
         const form = new FormData();
         form.append('image', new Blob([data]), 'img')
         try {
-            const src = await ArticleService.uploadImage(form)
-            yield instance.baseURL + "image-store/" + src.data;
+            const src = await ArticleService.uploadImage(form);
+            yield (process.env.NODE_ENV === 'development' ? "http://localhost:8000/image-store/" : '/api/image-store/') + src.data;
             return true;
         } catch (e) {
             return false;
@@ -82,7 +81,7 @@ export default function WriteOne() {
                 postData.id = params.id
                 await ArticleService.updateDraft(postData)
             } else {
-                await ArticleService.saveArticleAsDraft(postData)
+                (await ArticleService.saveArticleAsDraft(postData));
             }
             mySnackbarsMessage.current.message('success', '保存成功');
             navigateFunction('/')
@@ -96,6 +95,7 @@ export default function WriteOne() {
         if (!value || !category || !name) {
             mySnackbarsMessage.current.message('warning', '空的地方都要填哦(⊙o⊙)');
             return;
+
         }
         const postData: any = {
             content: value,
@@ -109,10 +109,11 @@ export default function WriteOne() {
                 postData.id = params.id
                 await ArticleService.updateArticleAndPublish(postData)
             } else {
-                await ArticleService.publishArticle(postData)
+               const {id} =  (await ArticleService.publishArticle(postData))?.data;
+               postData.id = id;
             }
             mySnackbarsMessage.current.message('success', '保存成功');
-            navigateFunction('/article/' + params.id)
+            navigateFunction('/article/' + (params.id || postData.id))
         } catch (e) {
         }
     }

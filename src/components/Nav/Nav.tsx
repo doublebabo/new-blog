@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useContext, useEffect, useRef, useState} from "react";
+import React, {  useContext, useEffect, useState} from "react";
 import {IconButton} from "@mui/material";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
@@ -26,7 +26,7 @@ export default function Nav() {
 
     const [available, setAvailable] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [loginStatus, setLoginStatus] = useState({t: localStorage.getItem('t'), username: localStorage.getItem('u')})
+    const [loginStatus] = useState({t: localStorage.getItem('t'), username: localStorage.getItem('u')})
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const location = useLocation();
     const params = useParams();
@@ -114,7 +114,7 @@ export default function Nav() {
                 <div className={"nav-container"}>
                     <Link to={"/"} className={"logo"}>启小谷</Link>
                     <div className={"logo-right"}>
-                        <Link to={'/writeOne'} target={'_blank'}>
+                        <Link to={'/writeOne'} >
                             <Button color={'secondary'} className="pc">
                                 <CreateIcon/>写文章
                             </Button>

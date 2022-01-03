@@ -28,6 +28,7 @@ const ChattingRoom = forwardRef((props: any, ref: any) => {
     useImperativeHandle(ref, () => ({
         close: onClose,
         click: () => {
+            socketInstance();
             setVisible(!visible)
         }
     }));
@@ -52,7 +53,6 @@ const ChattingRoom = forwardRef((props: any, ref: any) => {
         if (visible) {
             document.body.style.overflow = 'hidden';
             document.body.classList.add('body-overlay');
-            socketInstance();
             const chatScroll = document.getElementsByClassName('room-context')[0];
             chatScroll.scrollTo({top: chatScroll.scrollHeight});
         } else {

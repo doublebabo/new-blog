@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import './Home.scss';
 import {Link} from "react-router-dom";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -80,7 +80,6 @@ export default class Home2 extends React.Component<any, HomeState> {
                 list: (await listData).data || [],
             }
         )
-        console.log(this.context)
     }
 
     componentWillUnmount() {

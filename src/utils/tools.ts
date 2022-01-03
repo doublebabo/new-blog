@@ -7,7 +7,7 @@ export const dateFormatForChat = (s: number) => {
     const date = new Date(s);
     const minutes = date.getMinutes() < 10 ? 0 + String(date.getMinutes()) : date.getMinutes()
     if (date.toDateString() === new Date().toDateString()) {
-        return '今天' + ' ' + date.getHours() + ':' + minutes;
+        return '今天 ' + date.getHours() + ':' + minutes;
     }
     return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
         + ' ' + date.getHours() + ':' + minutes;

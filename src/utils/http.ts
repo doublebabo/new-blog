@@ -1,5 +1,4 @@
 import {mySnackbarsMessage} from '../components/MySnackbars/MySnackbars';
-import {useNavigate} from "react-router-dom";
 import {loginDialog} from "../components/LoginDialog/LoginDialog";
 
 const axios = require('axios');
@@ -8,7 +7,6 @@ const instance = axios.create({
     timeout: 15000,
     // headers: {'X-Custom-Header': 'foobar'}
 });
-instance.baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:8000/' : '/api';
 // request拦截器
 instance.interceptors.request.use((request: any) => {
     if (localStorage.getItem('t')) {

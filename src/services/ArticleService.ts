@@ -79,7 +79,7 @@ export default class ArticleService {
 
     static getIpInfo =(fn: Function) => {
         let s = document.createElement('script');
-        s.src = 'http://pv.sohu.com/cityjson?ie=utf-8';
+        s.src = 'https://pv.sohu.com/cityjson?ie=utf-8';
         //var returnCitySN = {"cip": "223.167.168.195", "cid": "310000", "cname": "上海市"};
         s.onload = () => {
             localStorage.setItem('ip', (window as any).returnCitySN['cip'])

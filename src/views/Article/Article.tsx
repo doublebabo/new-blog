@@ -14,12 +14,12 @@ export default function Article() {
 
     useEffect(() => {
         ArticleService.getArticleObj({id: params.id}).then((res: any) => {
-            const {content, name, author, updateTime} = res.data;
+            const {content, name, author, createTime} = res.data;
             setMd({
                 content: content ||'NOTHING',
                 name: name,
                 author: author,
-                updateTime: updateTime,
+                createTime: createTime,
             })
         })
     }, [params]);
@@ -29,7 +29,7 @@ export default function Article() {
             {md.content ? (
                 <div className="md-content">
                     <div className={'md-title'}>{md.name}</div>
-                    <div className={'md-author'}><span>{dateFormat(md.updateTime)}</span> By <span>{md.author}</span></div>
+                    <div className={'md-author'}><span>{dateFormat(md.createTime)}</span> By <span>{md.author}</span></div>
                     <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}
                                    children={md.content}
                                    rehypePlugins={[rehypeHighlight]}/>

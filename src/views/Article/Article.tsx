@@ -13,6 +13,7 @@ export default function Article() {
     let [md, setMd] = useState<any>({});
 
     useEffect(() => {
+        window.scrollTo({top: 0})
         ArticleService.getArticleObj({id: params.id}).then((res: any) => {
             const {content, name, author, createTime} = res.data;
             setMd({

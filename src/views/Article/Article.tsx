@@ -31,6 +31,12 @@ export default function Article() {
                 let myModal = document.getElementById("myModal");
                 let myModalImg = document.getElementById("myModalImg");
                 let myModalClose = document.getElementsByClassName("myModalClose")[0];
+                window.onclick = function(event) {
+                    if (event.target === myModal) {
+                        // @ts-ignore
+                        myModal.style.display = "none";
+                    }
+                }
                 // @ts-ignore
                 myModalClose.onclick = function() {
                     // @ts-ignore
@@ -58,7 +64,7 @@ export default function Article() {
             ) : <div className="md-loading">Loading.....</div>}
             <div id="myModal" className="modal">
                 <span className="myModalClose">&times;</span>
-                <img className="modal-content" id="myModalImg"/>
+                <img className="modal-content" alt="img" id="myModalImg"/>
             </div>
         </div>
     );

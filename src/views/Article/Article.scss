@@ -1,5 +1,9 @@
 .article {
   flex-grow: 1;
+  a {
+    color: #4078c0;
+    text-decoration: none;
+  }
   .md-content {
     box-sizing: border-box;
     max-width: 1200px;

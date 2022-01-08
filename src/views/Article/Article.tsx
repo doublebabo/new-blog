@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import './Article.scss';
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from 'rehype-highlight'
-import 'highlight.js/styles/github.css';
+import 'highlight.js/styles/atom-one-dark.css';
 import ArticleService from "../../services/ArticleService";
 import {useParams} from "react-router-dom";
 import {dateFormat} from "../../utils/tools";

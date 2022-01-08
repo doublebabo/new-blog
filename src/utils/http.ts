@@ -3,7 +3,7 @@ import {loginDialog} from "../components/LoginDialog/LoginDialog";
 
 const axios = require('axios');
 const instance = axios.create({
-    baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:8000/' : '/api',
+    baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:3000/' : '/api',
     timeout: 15000,
     // headers: {'X-Custom-Header': 'foobar'}
 });

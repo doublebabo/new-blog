@@ -111,6 +111,7 @@ checkBrowsers(paths.appPath, isInteractive)
     });
     // Load proxy config
     const proxySetting = require(paths.appPackageJson).proxy;
+    console.log('++++++++++++++==proxySetting', proxySetting);
     const proxyConfig = prepareProxy(
       proxySetting,
       paths.appPublic,

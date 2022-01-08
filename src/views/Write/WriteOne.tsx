@@ -8,7 +8,7 @@ import './WriteOne.scss'
 import {Button, SelectChangeEvent} from "@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
-import 'highlight.js/styles/github.css';
+import 'highlight.js/styles/atom-one-dark.css';
 import rehypeHighlight from "rehype-highlight";
 import {useNavigate, useParams} from "react-router-dom";
 import TextField from "@mui/material/TextField";

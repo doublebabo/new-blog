@@ -30,8 +30,9 @@ export default function Article() {
             img.addEventListener('click', function () {
                 let myModal = document.getElementById("myModal");
                 let myModalImg = document.getElementById("myModalImg");
+                let myModalClose = document.getElementsByClassName("myModalClose")[0];
                 // @ts-ignore
-                myModal.onclick = function() {
+                myModalClose.onclick = function() {
                     // @ts-ignore
                     myModal.style.display = "none";
                 }

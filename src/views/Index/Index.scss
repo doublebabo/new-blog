@@ -1,0 +1,36 @@
+.page-index {
+  text-align: center;
+  font-family: Montserrat, sans-serif;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(90deg, #fff 49.9%, #000 50%);
+  flex: 1;
+  h1 {
+    font-size: 5rem;
+    color: #fff;
+    mix-blend-mode: difference;
+  }
+
+  h2 {
+    margin-top: 10rem;
+    mix-blend-mode: difference;
+    color: #fff;
+    font-size: 2.5rem;
+    animation:shining 2.1s infinite ease-in-out;
+  }
+
+  @keyframes shining {
+    0% {
+      transform:scale(1);
+    }
+    50% {
+      transform:scale(1.12);
+    }
+    100% {
+      transform:scale(1);
+    }
+  }
+}

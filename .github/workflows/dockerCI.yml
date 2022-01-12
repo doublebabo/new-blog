@@ -45,3 +45,14 @@ jobs:
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/new-blog:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/new-blog:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/new-blog:buildcache,mode=max
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            docker pull blue143666/new-blog
+            docker-compose down
+            docker-compose up -d

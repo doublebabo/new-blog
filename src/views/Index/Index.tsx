@@ -7,8 +7,8 @@ export default function Index() {
     return (
         <div className="page-index">
             <h1>
-                <span>春风得意马蹄疾</span>
-                <span>一日看尽长安花</span>
+                <span>出不入兮往不反</span>
+                <span>平原忽兮路超远</span>
             </h1>
             <Link to={"home"}>
                 <h2>进入博客</h2>

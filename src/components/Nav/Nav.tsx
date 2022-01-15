@@ -69,7 +69,7 @@ export default function Nav() {
             try {
                 const {msg} = await ArticleService.deleteArticle({id: params.id})
                 mySnackbarsMessage.current.message('success', msg);
-                navigateFunction('/');
+                navigateFunction('/home');
             } catch (e) {
             }
         } else {

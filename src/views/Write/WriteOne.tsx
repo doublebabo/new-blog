@@ -29,13 +29,31 @@ export default function WriteOne() {
     const navigateFunction = useNavigate();
     let params = useParams();
 
+
+
     const getCategories = async () => {
         const {data} = await ArticleService.getCategories();
         setCategories(data.filter((i: any) => i.parentId !== -1))
     }
 
     useEffect(() => {
-        window.scrollTo({top: 0})
+        window.scrollTo({top: 0});
+        // @ts-ignore
+        document.querySelector(".mde-text").addEventListener('keydown', function(e: any) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                // @ts-ignore
+                var start = this.selectionStart;
+                // @ts-ignore
+                var end = this.selectionEnd;
+                // set textarea value to: text before caret + tab + text after caret
+                // @ts-ignore
+                this.value = this.value.substring(0, start) + "\t" + this.value.substring(end);
+                // put caret at right position again
+                // @ts-ignore
+                this.selectionStart = this.selectionEnd = start + 1;
+            }
+        });
         if (params.id) {
             ArticleService.getArticleObj({id: params.id}).then((res: any) => {
                 setValue(res.data.content)
@@ -95,7 +113,6 @@ export default function WriteOne() {
         if (!value || !category || !name) {
             mySnackbarsMessage.current.message('warning', '空的地方都要填哦(⊙o⊙)');
             return;
-
         }
         const postData: any = {
             content: value,

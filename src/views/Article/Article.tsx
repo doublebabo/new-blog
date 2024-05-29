@@ -57,7 +57,9 @@ export default function Article() {
             {md.content ? (
                 <div className="md-content">
                     <div className={'md-title'}>{md.name}</div>
-                    <div className={'md-author'}><span>{dateFormat(md.createTime)}</span> By <span>{md.author}</span></div>
+                    <div className={'md-author'}>
+{/*                         <span>{dateFormat(md.createTime)}</span> */}
+                        By <span>{md.author}</span></div>
                     <ReactMarkdown remarkPlugins={[[remarkGfm, {singleTilde: false}]]}
                                    children={md.content}
                                    rehypePlugins={[rehypeHighlight]}/>
